@@ -7,16 +7,16 @@ import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
 
 @Entity
-class FriendShip(sender:Member, receiver:Member):PrimaryKeyEntity() {
+class Friendship(user:Member, friend:Member):PrimaryKeyEntity() {
     @JsonBackReference
-    @ManyToOne(fetch = FetchType.LAZY, optional = true)
-    @JoinColumn
-    val sender:Member = sender
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name="user_id")
+    val user:Member = user
 
     @JsonBackReference
-    @ManyToOne(fetch = FetchType.LAZY, optional = true)
-    @JoinColumn
-    val receiver:Member = receiver
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name="friend_id")
+    val friend:Member = friend
 
 
 }
