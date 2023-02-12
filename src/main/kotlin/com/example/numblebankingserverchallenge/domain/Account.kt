@@ -18,11 +18,13 @@ class Account(owner:Member,name:String) :PrimaryKeyEntity(){
 
 
     @Column(nullable = false)
-    private var _balance:Long = 0
-        private set
+    private var _balance:Long = 0L
     val balance:Long
         get() = _balance
 
     @Version
     var versionNo:Long = 0L
+
+    fun checkAmount(amount:Long){_balance-=amount}
+    fun addAmount(amount: Long){_balance+=amount}
 }

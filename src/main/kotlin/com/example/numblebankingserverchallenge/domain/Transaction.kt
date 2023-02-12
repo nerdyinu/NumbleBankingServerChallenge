@@ -1,11 +1,19 @@
 package com.example.numblebankingserverchallenge.domain
 
+import jakarta.persistence.Column
 import jakarta.persistence.Entity
+import jakarta.persistence.JoinColumn
 import jakarta.persistence.OneToOne
 
 @Entity
-class Transaction(relatinoship:FriendShip) :PrimaryKeyEntity(){
+class Transaction(relationship:FriendShip,checkAmount:Long) :PrimaryKeyEntity(){
 
     @OneToOne
-    val relationship:FriendShip=relatinoship
+    @JoinColumn(name="id")
+    val relationship:FriendShip=relationship
+
+    @Column(nullable=false)
+    val checkAmount:Long = checkAmount
+
+
 }
