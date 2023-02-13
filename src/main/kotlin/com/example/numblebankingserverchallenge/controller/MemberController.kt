@@ -30,9 +30,9 @@ class MemberController (private val memberService: MemberService){
 
     }
 
-    @GetMapping("/users/{username}/friends")
-    fun friendsList(@PathVariable("username") username:String):ResponseEntity<List<UserDTO>>{
-        return memberService.getFriends(username).let { ResponseEntity.ok().body(it) }
+    @GetMapping("/users/{userId}/friends")
+    fun friendsList(@PathVariable("userId") userId:UUID):ResponseEntity<List<UserDTO>>{
+        return memberService.getFriends(userId).let { ResponseEntity.ok().body(it) }
     }
 
     @PostMapping("/users/friends/{friendName}")

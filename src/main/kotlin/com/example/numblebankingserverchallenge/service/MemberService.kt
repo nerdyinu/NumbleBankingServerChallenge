@@ -13,6 +13,6 @@ interface MemberService {
     fun createUser(signUpVO: SignUpVO):UserDTO?
     fun findByUsername(username:String):UserDTO?
     fun login(loginVO: LoginVO):UserDTO?
-    fun getFriends(username:String):List<UserDTO>?
+    fun getFriends(id:UUID):List<UserDTO>?
     fun addFriend(userId:UUID,friendName:String):FriendDTO?
 }

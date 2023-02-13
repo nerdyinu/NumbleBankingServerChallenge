@@ -7,6 +7,7 @@ import org.springframework.data.querydsl.QuerydslPredicateExecutor
 import java.util.UUID
 
 interface MemberRepository:JpaRepository<Member,UUID>, MemberRepositoryCustom,QuerydslPredicateExecutor<Member> {
+
     fun findByUsername(username:String):Member?
     fun findByUsernameAndEncryptedPassword(username: String, encrypted:String):Member?
 }
