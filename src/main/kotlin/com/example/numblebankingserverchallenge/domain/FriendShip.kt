@@ -9,7 +9,7 @@ import jakarta.persistence.ManyToOne
 @Entity
 class Friendship(user:Member, friend:Member):PrimaryKeyEntity() {
     @JsonBackReference
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false )
     @JoinColumn(name="user_id")
     val user:Member = user
 

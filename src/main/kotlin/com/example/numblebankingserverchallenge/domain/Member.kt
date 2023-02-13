@@ -9,6 +9,7 @@ import jakarta.persistence.OneToMany
 import org.hibernate.annotations.BatchSize
 
 @Entity
+
 class Member(username:String, encryptedPassword:String?):PrimaryKeyEntity() {
     @Column(nullable = false, unique = true)
     var username:String =username
@@ -18,6 +19,7 @@ class Member(username:String, encryptedPassword:String?):PrimaryKeyEntity() {
 
     @JsonManagedReference
     @OneToMany(mappedBy = "user", cascade = [CascadeType.ALL])
+    @BatchSize(size = 100)
     private val _friends:MutableList<Friendship> = mutableListOf()
     val friends:List<Friendship> get()= _friends.toList()
 
@@ -28,5 +30,5 @@ class Member(username:String, encryptedPassword:String?):PrimaryKeyEntity() {
     val accounts get()=_accounts.toList()
 
     fun addFreind(friend: Friendship){ _friends.add(friend)}
-
+    override fun toString(): String  = """Member(username= $username, encryptedPassword= $encryptedPassword)"""
 }

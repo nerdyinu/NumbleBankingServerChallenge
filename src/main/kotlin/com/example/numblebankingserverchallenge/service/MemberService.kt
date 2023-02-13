@@ -14,5 +14,5 @@ interface MemberService {
     fun findByUsername(username:String):UserDTO?
     fun login(loginVO: LoginVO):UserDTO?
     fun getFriends(id:UUID):List<UserDTO>?
-    fun addFriend(userId:UUID,friendName:String):FriendDTO?
+    fun addFriend(userId:UUID,friendId:UUID):FriendDTO?
 }

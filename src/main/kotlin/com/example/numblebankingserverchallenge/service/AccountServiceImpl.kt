@@ -1,7 +1,7 @@
 package com.example.numblebankingserverchallenge.service
 
 import com.example.numblebankingserverchallenge.dto.AccountDTO
-import com.example.numblebankingserverchallenge.repository.AccountRepository
+import com.example.numblebankingserverchallenge.repository.account.AccountRepository
 import org.springframework.stereotype.Service
 import java.util.*
 

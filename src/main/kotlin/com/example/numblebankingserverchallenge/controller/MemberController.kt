@@ -35,10 +35,10 @@ class MemberController (private val memberService: MemberService){
         return memberService.getFriends(userId).let { ResponseEntity.ok().body(it) }
     }
 
-    @PostMapping("/users/friends/{friendName}")
-    fun addFriend(@PathVariable("friendName") friendName:String, httpSession: HttpSession):ResponseEntity<FriendDTO>{
+    @PostMapping("/users/friends/{friendId}")
+    fun addFriend(@PathVariable("friendId") friendId:UUID, httpSession: HttpSession):ResponseEntity<FriendDTO>{
         val user = httpSession.getAttribute("user") as? UserDTO ?: return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build()
-        val friendDTO=memberService.addFriend(user.id,friendName) ?: return ResponseEntity.status(HttpStatus.BAD_REQUEST).build()
+        val friendDTO=memberService.addFriend(user.id,friendId) ?: return ResponseEntity.status(HttpStatus.BAD_REQUEST).build()
         return ResponseEntity.ok(friendDTO)
     }
 }

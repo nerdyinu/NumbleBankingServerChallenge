@@ -25,6 +25,8 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+    //database
+    testImplementation("com.h2database:h2")
     implementation("mysql:mysql-connector-java")
     //querydsl
     implementation("com.querydsl:querydsl-jpa:5.0.0:jakarta")
