@@ -4,8 +4,8 @@ import com.example.numblebankingserverchallenge.domain.Friendship
 import com.example.numblebankingserverchallenge.domain.Member
 import com.example.numblebankingserverchallenge.dto.FriendDTO
 
-import com.example.numblebankingserverchallenge.dto.LoginVO
-import com.example.numblebankingserverchallenge.dto.SignUpVO
+import com.example.numblebankingserverchallenge.dto.LoginRequest
+import com.example.numblebankingserverchallenge.dto.SignUpRequest
 
 import com.example.numblebankingserverchallenge.dto.MemberDTO
 import com.example.numblebankingserverchallenge.exception.UserExistsException
@@ -14,6 +14,7 @@ import com.example.numblebankingserverchallenge.repository.friendship.Friendship
 import com.example.numblebankingserverchallenge.repository.member.MemberRepository
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.util.UUID
 
 @Service
@@ -27,20 +28,20 @@ class MemberServiceImpl(
         memberRepository.findByUsername(username)?.let(::MemberDTO)
 
 
-    override fun createUser(signUpVO: SignUpVO): MemberDTO {
-        memberRepository.findByUsername(signUpVO.username) ?: throw UserExistsException()
+    override fun createUser(signUpRequest: SignUpRequest): MemberDTO {
+        memberRepository.findByUsername(signUpRequest.username)?.let{throw UserExistsException()}
 
-        val encrypted = passwordEncoder.encode(signUpVO.pw)
-        val member = Member(signUpVO.username, encrypted).let { memberRepository.save(it) }
+        val encrypted = passwordEncoder.encode(signUpRequest.pw)
+        val member = Member(signUpRequest.username, encrypted).let { memberRepository.save(it) }
         return MemberDTO(member)
 
     }
 
-    override fun login(loginVO: LoginVO): MemberDTO? {
+    override fun login(loginRequest: LoginRequest): MemberDTO? {
 
-        val user = memberRepository.findByUsername(loginVO.username) ?: return null
+        val user = memberRepository.findByUsername(loginRequest.username) ?: return null
 
-        return if (passwordEncoder.matches(loginVO.pw, user.encryptedPassword)) MemberDTO(user) else null
+        return if (passwordEncoder.matches(loginRequest.pw, user.encryptedPassword)) MemberDTO(user) else null
 
     }
 
@@ -48,15 +49,17 @@ class MemberServiceImpl(
         val findMember = memberRepository.findById(id).orElseThrow { UserNotFoundException() }
         return friendshipRepository.getFriends(findMember.id).map(::MemberDTO)
     }
-
+    @Transactional
     override fun addFriend(userId: UUID, friendId: UUID): FriendDTO {
 
         val findMember = memberRepository.findById(userId).orElse(null) ?: throw UserNotFoundException()
         val findFriend = memberRepository.findById(friendId).orElse(null) ?: throw UserNotFoundException()
 
         val friendShip = Friendship(findMember, findFriend)
+        findMember.addFreind(friendShip)
         val friendShip2 = Friendship(findFriend, findMember)
-        friendshipRepository.saveAll(listOf(friendShip2, friendShip))
+        findFriend.addFreind(friendShip2)
+        friendshipRepository.saveAll(listOf(friendShip2, friendShip)) // s-lock
         return FriendDTO(friendShip.id, findMember.username, findFriend.username)
     }
 }
