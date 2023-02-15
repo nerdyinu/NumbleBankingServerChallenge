@@ -27,6 +27,7 @@ import org.springframework.context.annotation.Bean
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
+import org.springframework.mock.web.MockHttpServletRequest
 import org.springframework.mock.web.MockHttpSession
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.core.userdetails.User
@@ -52,7 +53,7 @@ class MemberControllerUnitTest @Autowired constructor(
 ) {
     val signUpRequest = SignUpRequest("inu", "12345value")
     val returnMember: MemberDTO = MemberDTO(UUID.randomUUID(), signUpRequest.username)
-    val loginRequest = LoginRequest("inu", "12345value")
+    val loginRequest = LoginRequest(signUpRequest.username, "12345value")
     val mapper = ObjectMapper()
     val session = MockHttpSession()
 
@@ -75,22 +76,19 @@ class MemberControllerUnitTest @Autowired constructor(
     }
 
     @Test
-    fun `login - session에 MemberDTO객체 추가 성공`() {
+    fun `login - session에 MemberDTO가 추가된다`() {
         val encoded = passwordEncoder.encode(loginRequest.pw)
-        every { memberService.loadUserByUsername(loginRequest.username) } returns User(
-            loginRequest.username, encoded,
-            mutableListOf()
-        )
-        every {memberService.findByUsername(loginRequest.username)} returns MemberDTO(UUID.randomUUID(), loginRequest.username)
-        mockMvc.post("/login") {
+        val userdetails = User(loginRequest.username, encoded, arrayListOf())
+        every { memberService.loadUserByUsername(loginRequest.username) } returns userdetails
+        every {memberService.findByUsername(loginRequest.username)} returns returnMember
+        val result=mockMvc.post("/login") {
             contentType = MediaType.APPLICATION_JSON
             content = mapper.writeValueAsString(loginRequest)
-            accept = MediaType.APPLICATION_JSON
-            sessionAttrs
-        }
-        val member = session.getAttribute("user") as MemberDTO
+        }.andExpect { status { isOk() } }.andReturn()
+        val session = result.request.session
+        val member = session?.getAttribute("user") as? MemberDTO
         assertThat(member).isNotNull
-        assertThat(member.username).isEqualTo(loginRequest.username)
+        assertThat(member?.username).isEqualTo(loginRequest.username)
     }
 //    @GetMapping("/users/friends")
 //    fun friendsList(session: HttpSession): ResponseEntity<List<MemberDTO>> {

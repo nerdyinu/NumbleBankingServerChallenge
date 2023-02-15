@@ -45,12 +45,12 @@ class AuthenticationFilter (val memberService: MemberService): UsernamePasswordA
 
         val user =(authResult?.principal as? User) ?: throw RuntimeException("")
         val userDetails =  memberService.findByUsername(user.username) ?: throw UserNotFoundException()
-//        val key = env.getProperty("token.secret").let{
-//            Decoders.BASE64.decode(it).let{ bytes -> Keys.hmacShaKeyFor(bytes)}
-//        }
+
         request?.session?.setAttribute("user", userDetails)
 
-
+        //        val key = env.getProperty("token.secret").let{
+//            Decoders.BASE64.decode(it).let{ bytes -> Keys.hmacShaKeyFor(bytes)}
+//        }
 //        val token=Jwts.builder()
 //            .setSubject(userDetails.id.toString())
 //            .setExpiration(Date(System.currentTimeMillis()+env.getProperty("token.expiration_time")!!.toLong()))
