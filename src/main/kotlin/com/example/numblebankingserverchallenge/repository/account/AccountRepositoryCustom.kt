@@ -6,6 +6,6 @@ import java.util.UUID
 interface AccountRepositoryCustom {
 
     fun findByIdWithLock(accountId: UUID): Account?
-    fun findAccountJoinOwner(accountId:UUID): Account?
+    fun findByIdJoinOwner(accountId:UUID): Account?
     fun findByOwnerId(ownerId:UUID):List<Account>
 }

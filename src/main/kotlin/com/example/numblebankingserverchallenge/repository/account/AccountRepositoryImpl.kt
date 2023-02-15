@@ -10,7 +10,7 @@ import jakarta.persistence.LockModeType
 import java.util.UUID
 
 class AccountRepositoryImpl(private val jpaQueryFactory: JPAQueryFactory) : AccountRepositoryCustom {
-    override fun findAccountJoinOwner(accountId: UUID): Account? =
+    override fun findByIdJoinOwner(accountId: UUID): Account? =
         jpaQueryFactory.select(account).from(account).leftJoin(account.owner, member).fetchJoin()
             .where(account.id.eq(accountId))
             .fetchOne()

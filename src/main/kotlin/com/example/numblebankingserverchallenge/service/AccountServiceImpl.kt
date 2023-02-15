@@ -20,7 +20,7 @@ class AccountServiceImpl(
     private val memberRepository: MemberRepository
 ) : AccountService {
     override fun findAccountById(accountId: UUID): AccountDTO? =
-        accountRepository.findAccountJoinOwner(accountId)?.let(::AccountDTO)
+        accountRepository.findByIdJoinOwner(accountId)?.let(::AccountDTO)
 
 
     override fun findAllByOwnerId(ownerId: UUID): List<AccountDTO> =

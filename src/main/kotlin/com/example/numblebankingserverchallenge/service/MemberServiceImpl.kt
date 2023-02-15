@@ -12,6 +12,8 @@ import com.example.numblebankingserverchallenge.exception.UserExistsException
 import com.example.numblebankingserverchallenge.exception.UserNotFoundException
 import com.example.numblebankingserverchallenge.repository.friendship.FriendshipRepository
 import com.example.numblebankingserverchallenge.repository.member.MemberRepository
+import org.springframework.security.core.userdetails.User
+import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -27,6 +29,10 @@ class MemberServiceImpl(
     override fun findByUsername(username: String): MemberDTO? =
         memberRepository.findByUsername(username)?.let(::MemberDTO)
 
+    override fun loadUserByUsername(username: String?): UserDetails {
+        val member = username?.let{memberRepository.findByUsername(it)} ?: throw UserNotFoundException()
+        return User(member.username, member.encryptedPassword, mutableListOf())
+    }
 
     override fun createUser(signUpRequest: SignUpRequest): MemberDTO {
         memberRepository.findByUsername(signUpRequest.username)?.let{throw UserExistsException()}

@@ -16,20 +16,20 @@ import java.util.UUID
 
 @RestController
 class AccountController(private val accountService: AccountService) {
-    @GetMapping("/{userId}/{accountId}")
+    @GetMapping("/accounts/{accountId}")
     fun checkBalance(session: HttpSession, @PathVariable("accountId") accountId: UUID): ResponseEntity<AccountDTO> {
         val user =
             session.getAttribute("user") as? MemberDTO ?: return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build()
         return accountService.findAccountById(accountId).let { ResponseEntity.ok().body(it) }
     }
 
-    @PostMapping("/{userId}/account")
-    fun createAccount(@PathVariable("userId") userId: UUID, @RequestBody name: String): ResponseEntity<AccountDTO> =
-        accountService.createAccount(userId, name).let { ResponseEntity.status(HttpStatus.OK).body(it) }
-
-    @PostMapping("/{userId}/{fromAccountId}/{toAccountId}")
+    @PostMapping("/account")
+    fun createAccount(session: HttpSession, @RequestBody name: String): ResponseEntity<AccountDTO> {
+        val member = session.getAttribute("user") as? MemberDTO ?: return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build()
+        return accountService.createAccount(member.id, name).let { ResponseEntity.status(HttpStatus.OK).body(it) }
+    }
+    @PostMapping("/account/{fromAccountId}/{toAccountId}")
     fun transfer(
-        @PathVariable("userId") userId: UUID,
         @PathVariable("fromAccountId") fromAccountId: UUID,
         @PathVariable("toAccountId") toAccountId: UUID,
         @RequestBody amount:Long

@@ -26,7 +26,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     //database
-    testImplementation("com.h2database:h2")
+
     implementation("mysql:mysql-connector-java")
     //querydsl
     implementation("com.querydsl:querydsl-jpa:5.0.0:jakarta")
@@ -34,7 +34,14 @@ dependencies {
     kapt("org.springframework.boot:spring-boot-configuration-processor")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-    testImplementation("org.springframework.boot:spring-boot-starter-test")
+    implementation("io.jsonwebtoken:jjwt-api:0.11.5")
+    implementation("io.jsonwebtoken:jjwt-impl:0.11.5")
+    implementation("io.jsonwebtoken:jjwt-gson:0.11.5")
+    //test
+    testImplementation("com.h2database:h2")
+    testImplementation ("io.mockk:mockk-jvm:1.13.3")
+    testImplementation("com.ninja-squad:springmockk:4.0.0")
+    testImplementation("org.springframework.boot:spring-boot-starter-test"){exclude(module="mockito-core")}
     testImplementation("org.springframework.security:spring-security-test")
 }
 

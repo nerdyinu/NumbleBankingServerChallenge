@@ -4,6 +4,7 @@ import com.example.numblebankingserverchallenge.dto.FriendDTO
 import com.example.numblebankingserverchallenge.dto.LoginRequest
 import com.example.numblebankingserverchallenge.dto.SignUpRequest
 import com.example.numblebankingserverchallenge.dto.MemberDTO
+import com.example.numblebankingserverchallenge.exception.UserNotFoundException
 import com.example.numblebankingserverchallenge.service.MemberService
 import jakarta.servlet.http.HttpSession
 import org.springframework.http.HttpStatus
@@ -17,28 +18,33 @@ import java.util.UUID
 
 @RestController
 class MemberController (private val memberService: MemberService){
+
     @PostMapping("/signup")
     fun signup(@RequestBody signUpRequest: SignUpRequest):ResponseEntity<MemberDTO>{
-        return memberService.createUser(signUpRequest)?.let{ ResponseEntity.ok().body(it)} ?: ResponseEntity.badRequest().build()
+        return memberService.createUser(signUpRequest).let{ ResponseEntity.ok().body(it)} ?: ResponseEntity.badRequest().build()
     }
 
-    @GetMapping("/login")
-    fun login(@RequestBody loginRequest:LoginRequest, session: HttpSession):ResponseEntity<MemberDTO>{
-        val MemberDTO = memberService.login(loginRequest) ?: return ResponseEntity.badRequest().build()
-        session.setAttribute("user", MemberDTO)
-        return ResponseEntity.ok().body(MemberDTO)
+//    @GetMapping("/login")
+//    fun login(@RequestBody loginRequest:LoginRequest, session: HttpSession):ResponseEntity<MemberDTO>{
+//        val MemberDTO = memberService.login(loginRequest) ?: return ResponseEntity.badRequest().build()
+//        session.setAttribute("user", MemberDTO)
+//        return ResponseEntity.ok().body(MemberDTO)
+//
+//    }
 
-    }
-
-    @GetMapping("/users/{userId}/friends")
-    fun friendsList(@PathVariable("userId") userId:UUID):ResponseEntity<List<MemberDTO>>{
-        return memberService.getFriends(userId).let { ResponseEntity.ok().body(it) }
+    @GetMapping("/users/friends")
+    fun friendsList(session: HttpSession):ResponseEntity<List<MemberDTO>>{
+        val member = session.getAttribute("user") as? MemberDTO ?: return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build()
+        return memberService.getFriends(member.id).let { ResponseEntity.ok().body(it) }
     }
 
     @PostMapping("/users/friends/{friendId}")
     fun addFriend(@PathVariable("friendId") friendId:UUID, httpSession: HttpSession):ResponseEntity<FriendDTO>{
         val user = httpSession.getAttribute("user") as? MemberDTO ?: return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build()
-        val friendDTO=memberService.addFriend(user.id,friendId) ?: return ResponseEntity.status(HttpStatus.BAD_REQUEST).build()
-        return ResponseEntity.ok(friendDTO)
+        try{
+            return memberService.addFriend(user.id,friendId).let { ResponseEntity.ok(it) }
+        }catch (ex:UserNotFoundException){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build()
+        }
     }
 }

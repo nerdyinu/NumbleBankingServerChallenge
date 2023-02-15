@@ -5,11 +5,13 @@ import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.FetchType
+import jakarta.persistence.Index
 import jakarta.persistence.OneToMany
+import jakarta.persistence.Table
 import org.hibernate.annotations.BatchSize
 
 @Entity
-
+@Table(name= "MEMBER", indexes = [Index(name="idx_username", columnList = "username")])
 class Member(username:String, encryptedPassword:String?):PrimaryKeyEntity() {
     @Column(nullable = false, unique = true)
     var username:String =username
