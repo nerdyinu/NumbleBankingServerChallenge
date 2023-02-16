@@ -1,15 +1,28 @@
 package com.example.numblebankingserverchallenge.controller
 
+import com.example.numblebankingserverchallenge.domain.Friendship
+import com.example.numblebankingserverchallenge.domain.Member
+import com.example.numblebankingserverchallenge.dto.LoginRequest
+import com.example.numblebankingserverchallenge.dto.MemberDTO
+import com.example.numblebankingserverchallenge.dto.SignUpRequest
+import com.example.numblebankingserverchallenge.exception.UserNotFoundException
 import com.example.numblebankingserverchallenge.service.MemberService
+import com.fasterxml.jackson.databind.ObjectMapper
+import io.mockk.every
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.http.MediaType
+import org.springframework.mock.web.MockHttpSession
+import org.springframework.security.crypto.password.PasswordEncoder
+import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.servlet.MockMvc
+import org.springframework.test.web.servlet.post
 import java.util.*
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
@@ -18,14 +31,22 @@ import java.util.*
 @ExtendWith(SpringExtension::class)
 class MemberControllerIntegrationTest @Autowired constructor(
     private val mockMvc: MockMvc,
-    private val memberService: MemberService
+    private val memberService: MemberService,
+    private val passwordEncoder: PasswordEncoder
 ) {
-//    @PostMapping("/signup")
-//    fun signup(@RequestBody signUpRequest: SignUpRequest): ResponseEntity<MemberDTO> {
-//        return memberService.createUser(signUpRequest).let{ ResponseEntity.ok().body(it)} ?: ResponseEntity.badRequest().build()
-//    }
+    val signUpRequest = SignUpRequest("inu", "12345value")
+    val friendSignup = SignUpRequest("friend1", "23456value")
+    val member = Member(signUpRequest.username, passwordEncoder.encode(signUpRequest.pw))
+    val friend = Member(friendSignup.username, passwordEncoder.encode(friendSignup.pw))
+    val returnMember: MemberDTO = MemberDTO(member)
+    val loginRequest = LoginRequest(signUpRequest.username, "12345value")
+    val mapper = ObjectMapper()
+    val session = MockHttpSession()
+    val mySession= mapOf("user" to returnMember)
     @BeforeEach
     fun `회원가입 성공`() {
+        memberService.createUser(signUpRequest)
+        session.setAttribute("user", returnMember)
     }
 
     @Test
@@ -41,6 +62,36 @@ class MemberControllerIntegrationTest @Autowired constructor(
     fun `친구 추가 성공 - 회원가입, 로그인 후 정상적으로`(){}
 
     @Test fun `친구 추가 실패 - 존재하지 않는 친구Id`(){}
+    @Test
+    @WithMockUser
+    fun `존재하지 않는 친구id인 경우 400`(){
+//        val friend = Member("friend1", passwordEncoder.encode("23456value"))
+        val friendship = Friendship(member, friend)
+        val randomId = UUID.randomUUID()
+
+        mockMvc.post("/users/friends/${randomId}"){
+            contentType = MediaType.APPLICATION_JSON
+            accept=  MediaType.APPLICATION_JSON
+            sessionAttrs = mySession
+        }.andExpect {
+            status { isBadRequest()}
+        }
+    }
+    @Test
+    @WithMockUser
+    fun `자기 자신을 요청한 경우 400`(){
+
+//        val friend =memberService.createUser(SignUpRequest("friend1", "23456value"))
+        val friendship = Friendship(member, friend)
+        val randomId = UUID.randomUUID()
+        mockMvc.post("/users/friends/${member.id}"){
+            contentType = MediaType.APPLICATION_JSON
+            accept=  MediaType.APPLICATION_JSON
+            sessionAttrs = mySession
+        }.andExpect {
+            status { isBadRequest()}
+        }
+    }
 //
 //    @GetMapping("/login")
 //    fun login(@RequestBody loginRequest: LoginRequest, session: HttpSession): ResponseEntity<MemberDTO> {

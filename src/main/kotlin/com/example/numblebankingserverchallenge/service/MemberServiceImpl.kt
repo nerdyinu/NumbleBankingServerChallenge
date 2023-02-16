@@ -60,7 +60,7 @@ class MemberServiceImpl(
 
         val findMember = memberRepository.findById(userId).orElse(null) ?: throw UserNotFoundException()
         val findFriend = memberRepository.findById(friendId).orElse(null) ?: throw UserNotFoundException()
-
+        if(findMember.equals(findFriend)) throw UserNotFoundException()
         val friendShip = Friendship(findMember, findFriend)
         findMember.addFreind(friendShip)
         val friendShip2 = Friendship(findFriend, findMember)
