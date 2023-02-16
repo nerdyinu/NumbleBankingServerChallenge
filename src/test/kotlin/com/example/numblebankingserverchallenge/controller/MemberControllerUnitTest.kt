@@ -175,19 +175,4 @@ class MemberControllerUnitTest @Autowired constructor(
         }
     }
 
-//    @GetMapping("/users/friends")
-//    fun friendsList(session: HttpSession): ResponseEntity<List<MemberDTO>> {
-//        val member = session.getAttribute("user") as? MemberDTO ?: return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build()
-//        return memberService.getFriends(member.id).let { ResponseEntity.ok().body(it) }
-//    }
-//
-//    @PostMapping("/users/friends/{friendId}")
-//    fun addFriend(@PathVariable("friendId") friendId:UUID, httpSession: HttpSession): ResponseEntity<FriendDTO> {
-//        val user = httpSession.getAttribute("user") as? MemberDTO ?: return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build()
-//        try{
-//            return memberService.addFriend(user.id,friendId).let { ResponseEntity.ok(it) }
-//        }catch (ex: UserNotFoundException){
-//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build()
-//        }
-//    }
 }
