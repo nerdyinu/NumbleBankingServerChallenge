@@ -12,12 +12,12 @@ import org.hibernate.annotations.BatchSize
 
 @Entity
 @Table(name= "MEMBER", indexes = [Index(name="idx_username", columnList = "username")])
-class Member(username:String, encryptedPassword:String?):PrimaryKeyEntity() {
+class Member(username:String, encryptedPassword:String):PrimaryKeyEntity() {
     @Column(nullable = false, unique = true)
     var username:String =username
         protected set
 
-    var encryptedPassword:String? = encryptedPassword
+    var encryptedPassword:String = encryptedPassword
 
     @JsonManagedReference
     @OneToMany(mappedBy = "user", cascade = [CascadeType.ALL])

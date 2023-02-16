@@ -11,8 +11,8 @@ import java.util.*
 class FriendshipRepositoryImpl(private val jpaQueryFactory: JPAQueryFactory) : FriendshipRepositoryCustom {
     override fun getFriends(id: UUID): List<Member> {
         val member2 = QMember("member2")
-        return jpaQueryFactory.select(friendship.friend).from(friendship).where(friendship.user.id.eq(id)).leftJoin(
+        return jpaQueryFactory.select(friendship.friend).from(friendship).leftJoin(
             friendship.friend, member
-        ).leftJoin(friendship.user,member2).fetch()
+        ).join(friendship.user, member2).on(member2.id.eq(id)).fetch()
     }
 }

@@ -10,6 +10,7 @@ import com.example.numblebankingserverchallenge.repository.account.AccountReposi
 import com.example.numblebankingserverchallenge.repository.member.MemberRepository
 import com.example.numblebankingserverchallenge.repository.transaction.TransactionRepository
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Propagation
 import org.springframework.transaction.annotation.Transactional
 import java.util.*
 
@@ -32,7 +33,7 @@ class AccountServiceImpl(
         return accountRepository.save(Account(owner, name)).let(::AccountDTO)
     }
 
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     override fun createTransaction(fromAccountId: UUID, toAccountId: UUID, amount: Long): TransactionDTO {
         val fromAccount = accountRepository.findByIdWithLock(fromAccountId) ?: throw AccountNotFoundException()
         val toAccount = accountRepository.findByIdWithLock(toAccountId)?: throw AccountNotFoundException()

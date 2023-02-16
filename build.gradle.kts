@@ -20,6 +20,7 @@ repositories {
 }
 
 dependencies {
+    val kotestVersion = "5.5.5"
     implementation("com.github.f4b6a3:ulid-creator:5.1.0")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-security")
@@ -38,6 +39,9 @@ dependencies {
     implementation("io.jsonwebtoken:jjwt-impl:0.11.5")
     implementation("io.jsonwebtoken:jjwt-gson:0.11.5")
     //test
+    testImplementation("io.kotest:kotest-runner-junit5-jvm:4.4.3")
+    testImplementation("io.kotest:kotest-assertions-core-jvm:4.4.3")
+    implementation("io.kotest:kotest-extensions-spring:4.4.3")
     testImplementation("com.h2database:h2")
     testImplementation ("io.mockk:mockk-jvm:1.13.3")
     testImplementation("com.ninja-squad:springmockk:4.0.0")

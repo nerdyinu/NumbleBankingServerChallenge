@@ -17,12 +17,11 @@ class AccountRepositoryImpl(private val jpaQueryFactory: JPAQueryFactory) : Acco
 
 
     override fun findByOwnerId(ownerId: UUID): List<Account> =
-        jpaQueryFactory.selectFrom(account).leftJoin(account.owner, member).fetchJoin()
-            .where(account.owner.id.eq(ownerId))
+        jpaQueryFactory.selectFrom(account).leftJoin(account.owner, member).on(member.id.eq(ownerId))
             .fetch()
 
     override fun findByIdWithLock(accountId: UUID): Account? =
-        jpaQueryFactory.selectFrom(account).where(account.id.eq(accountId)).setLockMode(LockModeType.PESSIMISTIC_WRITE)
+        jpaQueryFactory.selectFrom(account).where(account.id.eq(accountId)).setLockMode(LockModeType.PESSIMISTIC_WRITE).setHint("jakarta.persistence.lock.timeout", 3000)
             .fetchOne()
 
 }
