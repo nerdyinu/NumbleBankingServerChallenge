@@ -17,16 +17,25 @@ java.sourceCompatibility = JavaVersion.VERSION_17
 
 repositories {
     mavenCentral()
+
+}
+val testContainerVersion = "1.17.6"
+dependencyManagement {
+    imports {
+        mavenBom("org.testcontainers:testcontainers-bom:$testContainerVersion")
+    }
 }
 
 dependencies {
-    val kotestVersion = "5.5.5"
+
     implementation("com.github.f4b6a3:ulid-creator:5.1.0")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     //database
+    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
+    implementation ("org.jetbrains.kotlin:kotlin-reflect:1.7.22")
 
     implementation("mysql:mysql-connector-java")
     //querydsl
@@ -39,10 +48,11 @@ dependencies {
     implementation("io.jsonwebtoken:jjwt-impl:0.11.5")
     implementation("io.jsonwebtoken:jjwt-gson:0.11.5")
     //test
-    testImplementation("io.kotest:kotest-runner-junit5-jvm:4.4.3")
-    testImplementation("io.kotest:kotest-assertions-core-jvm:4.4.3")
-    implementation("io.kotest:kotest-extensions-spring:4.4.3")
     testImplementation("com.h2database:h2")
+//    testImplementation("org.testcontainers:junit-jupiter")
+//    testImplementation("org.testcontainers:mysql:$testContainerVersion")
+
+//    testImplementation("org.apache.derby:derby")
     testImplementation ("io.mockk:mockk-jvm:1.13.3")
     testImplementation("com.ninja-squad:springmockk:4.0.0")
     testImplementation("org.springframework.boot:spring-boot-starter-test"){exclude(module="mockito-core")}

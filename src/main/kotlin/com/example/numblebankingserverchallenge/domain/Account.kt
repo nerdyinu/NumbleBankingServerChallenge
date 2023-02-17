@@ -10,7 +10,7 @@ import jakarta.persistence.OneToMany
 import jakarta.persistence.Version
 
 @Entity
-class Account(owner:Member,name:String) :PrimaryKeyEntity(){
+class Account(owner:Member,name:String, balance:Long = 0L) :PrimaryKeyEntity(){
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name="owner_id")
@@ -24,7 +24,7 @@ class Account(owner:Member,name:String) :PrimaryKeyEntity(){
     val transactions:List<Transaction> get() = _transactions.toList()
 
     @Column(nullable = false)
-    private var _balance:Long = 0L
+    private var _balance:Long = balance
     val balance:Long
         get() = _balance
 

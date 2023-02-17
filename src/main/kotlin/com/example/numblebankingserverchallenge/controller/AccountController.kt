@@ -24,9 +24,9 @@ class AccountController(private val accountService: AccountService) {
     }
 
     @PostMapping("/account")
-    fun createAccount(session: HttpSession, @RequestBody name: String): ResponseEntity<AccountDTO> {
+    fun createAccount(session: HttpSession, @RequestBody name: String, @RequestBody amount: Long): ResponseEntity<AccountDTO> {
         val member = session.getAttribute("user") as? MemberDTO ?: return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build()
-        return accountService.createAccount(member.id, name).let { ResponseEntity.status(HttpStatus.OK).body(it) }
+        return accountService.createAccount(member.id, name,amount).let { ResponseEntity.status(HttpStatus.OK).body(it) }
     }
     @PostMapping("/account/{fromAccountId}/{toAccountId}")
     fun transfer(

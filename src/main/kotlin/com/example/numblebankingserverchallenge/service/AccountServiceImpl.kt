@@ -28,18 +28,18 @@ class AccountServiceImpl(
         accountRepository.findByOwnerId(ownerId).map(::AccountDTO)
 
     @Transactional
-    override fun createAccount(ownerId: UUID, name: String): AccountDTO {
+    override fun createAccount(ownerId: UUID, name: String, amount: Long): AccountDTO {
         val owner = memberRepository.findById(ownerId).orElseThrow { UserNotFoundException() }
-        return accountRepository.save(Account(owner, name)).let(::AccountDTO)
+        return accountRepository.save(Account(owner, name,amount)).let(::AccountDTO)
     }
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @Transactional
     override fun createTransaction(fromAccountId: UUID, toAccountId: UUID, amount: Long): TransactionDTO {
         val fromAccount = accountRepository.findByIdWithLock(fromAccountId) ?: throw AccountNotFoundException()
         val toAccount = accountRepository.findByIdWithLock(toAccountId)?: throw AccountNotFoundException()
         val transaction = Transaction(fromAccount, toAccount, amount).let { transactionRepository.save(it) } //shared-lock
         fromAccount.checkAmount(amount) // x-lock : deadlock
-        toAccount.checkAmount(amount)
+        toAccount.addAmount(amount)
         return TransactionDTO(fromAccountId,toAccountId, amount)
     }
 }
