@@ -6,12 +6,11 @@ import com.example.numblebankingserverchallenge.domain.Member
 import com.example.numblebankingserverchallenge.dto.AccountDTO
 import com.example.numblebankingserverchallenge.dto.MemberDTO
 import com.example.numblebankingserverchallenge.dto.SignUpRequest
+import com.example.numblebankingserverchallenge.dto.TransactionDTO
 import com.example.numblebankingserverchallenge.repository.account.AccountRepository
 import com.example.numblebankingserverchallenge.repository.member.MemberRepository
 import com.example.numblebankingserverchallenge.repository.transaction.TransactionRepository
-import kotlinx.coroutines.joinAll
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.*
 import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.*
 import org.junit.jupiter.api.AfterEach
@@ -33,7 +32,6 @@ import org.springframework.transaction.annotation.Transactional
 @ExtendWith(SpringExtension::class)
 class AccountServiceTest @Autowired constructor(
     private val memberRepository: MemberRepository,
-    private val memberService: MemberService,
     private val accountService: AccountService,
     private val accountRepository: AccountRepository,
     private val transactionRepository: TransactionRepository
@@ -90,27 +88,27 @@ class AccountServiceTest @Autowired constructor(
     @Test
     @Transactional
     fun `should createTransaction in concurrent env`(){
+        lateinit var res:List<TransactionDTO>
         val friend = memberRepository.save(Member("friend", "ecpw1"))
-
-//        val ac1=accountService.createAccount(owner.id,"ac1", 3000)
-//        val friendac = accountService.createAccount(friend.id, "friendac", 3000)
         val ac1 = accountRepository.save(Account(owner,"ac1",3000))
         val friendac = accountRepository.save(Account(friend,"friendac",3000))
-//        accountService.createTransaction(ac1.id,friendac.id,1000)
         runBlocking {
-            val job1= launch {
+            val job1= async {
                 accountService.createTransaction(ac1.id, friendac.id, 1000 )
             }
 
-            val job2=launch {
+            val job2=async {
                 accountService.createTransaction(ac1.id,friendac.id,2000)
             }
-            joinAll(job1,job2)
+            res=awaitAll(job1,job2)
         }
         val res1=accountRepository.findById(ac1.id).orElse(null)
         val res2=accountRepository.findById(friendac.id).orElse(null)
         assertThat(res1).isNotNull; assertThat(res2).isNotNull
         assertThat(res1.balance).isEqualTo(0L)
         assertThat(res2.balance).isEqualTo(6000)
+        assertThat(res).extracting("fromAccountId").containsOnly(ac1.id)
+        assertThat(res).extracting("toAccountId").containsOnly(friendac.id)
+        assertThat(res).extracting("amount").containsExactly(1000L,2000L)
     }
 }
