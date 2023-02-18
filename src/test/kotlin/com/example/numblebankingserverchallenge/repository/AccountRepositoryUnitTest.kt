@@ -109,7 +109,7 @@ class AccountRepositoryUnitTest @Autowired constructor(
 
     /*
     fun findByIdWithLock(accountId: UUID): Account?
-    Test Deadlock
+    Test LockTimeOutException
     */
     @Test
     fun `test findByIdWithLock`() {
@@ -119,41 +119,26 @@ class AccountRepositoryUnitTest @Autowired constructor(
             em.persist(member)
             em.persist(account)
             em.flush()
+
             val threadLocalEntityManager = ThreadLocal<EntityManager>()
             val deferred1 = async {
-                val entityManager = emf.createEntityManager()
-                threadLocalEntityManager.set(entityManager)
-
-                val tr = entityManager.transaction
-                tr.begin()
-                val account1 = accountRepository.findByIdWithLock(account.id)
-                delay(5000)
-                tr.commit()
-
-                entityManager.close()
+                val transactionTemplate = TransactionTemplate(transactionManager)
+                transactionTemplate.execute {
+                    val account1 = accountRepository.findByIdWithLock(account.id)
+                    Thread.sleep(5000)
+                }
             }
+//
 
-            val exceptionHandler = CoroutineExceptionHandler { _, ex ->
-                println("${ex.cause}")
-                assertThat(ex).isInstanceOf(LockTimeoutException::class.java)
-            }
-
+            delay(1000)
             val deferred2 = async{
-                val entityManager = emf.createEntityManager()
-                threadLocalEntityManager.set(entityManager)
-                val tr = entityManager.transaction
-
-                tr.begin()
-                val account2 = accountRepository.findByIdWithLock(account.id)
-                tr.commit()
-
-                entityManager.close()
-
-
+                val transactionTemplate = TransactionTemplate(transactionManager)
+                transactionTemplate.execute {
+                    val account1 = accountRepository.findByIdWithLock(account.id)
+                }
             }
-//            assertDoesNotThrow {  }
             assertThatThrownBy { runBlocking { deferred1.await();deferred2.await(); } }
-//            assertThat(job2.isCancelled).isEqualTo(true)
+
         }
     }
 

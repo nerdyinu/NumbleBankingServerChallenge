@@ -6,7 +6,6 @@ import com.example.numblebankingserverchallenge.dto.FriendDTO
 import com.example.numblebankingserverchallenge.dto.LoginRequest
 import com.example.numblebankingserverchallenge.dto.MemberDTO
 import com.example.numblebankingserverchallenge.dto.SignUpRequest
-import com.example.numblebankingserverchallenge.exception.UserNotFoundException
 import com.example.numblebankingserverchallenge.repository.member.MemberRepository
 import com.example.numblebankingserverchallenge.service.MemberService
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -163,7 +162,7 @@ class MemberControllerUnitTest @Autowired constructor(
     }
     @Test
     @WithMockUser
-    fun `세션에 정보가 없는 경우 401 UNAUTHORIZED`(){
+    fun `세션 로그인 체크 실패 시- 401 UNAUTHORIZED`(){
         val friend = Member("friend1", passwordEncoder.encode("23456value"))
         val friendship = Friendship(member, friend)
         every { memberService.addFriend(member.id, friend.id) } returns FriendDTO(friendship)

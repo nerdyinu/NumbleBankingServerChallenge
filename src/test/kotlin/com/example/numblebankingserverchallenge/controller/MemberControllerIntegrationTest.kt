@@ -5,10 +5,11 @@ import com.example.numblebankingserverchallenge.domain.Member
 import com.example.numblebankingserverchallenge.dto.LoginRequest
 import com.example.numblebankingserverchallenge.dto.MemberDTO
 import com.example.numblebankingserverchallenge.dto.SignUpRequest
-import com.example.numblebankingserverchallenge.exception.UserNotFoundException
+import com.example.numblebankingserverchallenge.repository.member.MemberRepository
 import com.example.numblebankingserverchallenge.service.MemberService
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.mockk.every
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -32,7 +33,8 @@ import java.util.*
 class MemberControllerIntegrationTest @Autowired constructor(
     private val mockMvc: MockMvc,
     private val memberService: MemberService,
-    private val passwordEncoder: PasswordEncoder
+    private val passwordEncoder: PasswordEncoder,
+    private val memberRepository: MemberRepository
 ) {
     val signUpRequest = SignUpRequest("inu", "12345value")
     val friendSignup = SignUpRequest("friend1", "23456value")
@@ -45,8 +47,12 @@ class MemberControllerIntegrationTest @Autowired constructor(
     val mySession= mapOf("user" to returnMember)
     @BeforeEach
     fun `회원가입 성공`() {
-        memberService.createUser(signUpRequest)
+        memberRepository.save(member)
         session.setAttribute("user", returnMember)
+    }
+    @AfterEach
+    fun deleteAll(){
+        memberRepository.deleteAll()
     }
 
     @Test
@@ -74,7 +80,7 @@ class MemberControllerIntegrationTest @Autowired constructor(
             accept=  MediaType.APPLICATION_JSON
             sessionAttrs = mySession
         }.andExpect {
-            status { isBadRequest()}
+            status { isNotFound()}
         }
     }
     @Test

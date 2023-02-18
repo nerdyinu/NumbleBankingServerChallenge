@@ -1,7 +1,8 @@
 package com.example.numblebankingserverchallenge.security
 
 import com.example.numblebankingserverchallenge.dto.LoginRequest
-import com.example.numblebankingserverchallenge.exception.UserNotFoundException
+import com.example.numblebankingserverchallenge.exception.CustomException
+
 import com.example.numblebankingserverchallenge.service.MemberService
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
@@ -44,7 +45,7 @@ class AuthenticationFilter (val memberService: MemberService): UsernamePasswordA
     ) {
 
         val user =(authResult?.principal as? User) ?: throw RuntimeException("")
-        val userDetails =  memberService.findByUsername(user.username) ?: throw UserNotFoundException()
+        val userDetails =  memberService.findByUsername(user.username) ?: throw CustomException.UserNotFoundException()
 
         request?.session?.setAttribute("user", userDetails)
 

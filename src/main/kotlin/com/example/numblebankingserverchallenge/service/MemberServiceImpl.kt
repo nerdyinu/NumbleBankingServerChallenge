@@ -8,8 +8,8 @@ import com.example.numblebankingserverchallenge.dto.LoginRequest
 import com.example.numblebankingserverchallenge.dto.SignUpRequest
 
 import com.example.numblebankingserverchallenge.dto.MemberDTO
-import com.example.numblebankingserverchallenge.exception.UserExistsException
-import com.example.numblebankingserverchallenge.exception.UserNotFoundException
+import com.example.numblebankingserverchallenge.exception.CustomException
+
 import com.example.numblebankingserverchallenge.repository.friendship.FriendshipRepository
 import com.example.numblebankingserverchallenge.repository.member.MemberRepository
 import org.springframework.security.core.userdetails.User
@@ -30,12 +30,12 @@ class MemberServiceImpl(
         memberRepository.findByUsername(username)?.let(::MemberDTO)
 
     override fun loadUserByUsername(username: String?): UserDetails {
-        val member = username?.let{memberRepository.findByUsername(it)} ?: throw UserNotFoundException()
+        val member = username?.let{memberRepository.findByUsername(it)} ?: throw CustomException.UserNotFoundException()
         return User(member.username, member.encryptedPassword, mutableListOf())
     }
 
     override fun createUser(signUpRequest: SignUpRequest): MemberDTO {
-        memberRepository.findByUsername(signUpRequest.username)?.let{throw UserExistsException()}
+        memberRepository.findByUsername(signUpRequest.username)?.let{throw CustomException.UserExistsException()}
 
         val encrypted = passwordEncoder.encode(signUpRequest.pw)
         val member = Member(signUpRequest.username, encrypted).let { memberRepository.save(it) }
@@ -52,15 +52,15 @@ class MemberServiceImpl(
     }
 
     override fun getFriends(id: UUID): List<MemberDTO> {
-        val findMember = memberRepository.findById(id).orElseThrow { UserNotFoundException() }
+        val findMember = memberRepository.findById(id).orElseThrow { CustomException.UserNotFoundException() }
         return friendshipRepository.getFriends(findMember.id).map(::MemberDTO)
     }
     @Transactional
     override fun addFriend(userId: UUID, friendId: UUID): FriendDTO {
 
-        val findMember = memberRepository.findById(userId).orElse(null) ?: throw UserNotFoundException()
-        val findFriend = memberRepository.findById(friendId).orElse(null) ?: throw UserNotFoundException()
-        if(findMember.equals(findFriend)) throw UserNotFoundException()
+        val findMember = memberRepository.findById(userId).orElse(null) ?: throw CustomException.UserNotFoundException()
+        val findFriend = memberRepository.findById(friendId).orElse(null) ?: throw CustomException.UserNotFoundException()
+        if(userId==friendId) throw CustomException.BadRequestException()
         val friendShip = Friendship(findMember, findFriend)
         findMember.addFreind(friendShip)
         val friendShip2 = Friendship(findFriend, findMember)

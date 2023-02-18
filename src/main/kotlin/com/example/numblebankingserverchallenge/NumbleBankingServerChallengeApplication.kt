@@ -1,6 +1,7 @@
 package com.example.numblebankingserverchallenge
 
 import com.example.numblebankingserverchallenge.dto.MemberDTO
+import com.example.numblebankingserverchallenge.exception.CustomException
 import com.querydsl.jpa.impl.JPAQueryFactory
 import jakarta.persistence.EntityManager
 import jakarta.persistence.PersistenceContext
@@ -24,6 +25,7 @@ class NumbleBankingServerChallengeApplication{
     fun jpaQueryFactory():JPAQueryFactory = JPAQueryFactory(em)
     @Bean
     fun passwordEncoder():PasswordEncoder =BCryptPasswordEncoder()
+
 }
 
 fun main(args: Array<String>) {

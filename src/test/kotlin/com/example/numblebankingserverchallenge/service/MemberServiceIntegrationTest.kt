@@ -4,8 +4,7 @@ import com.example.numblebankingserverchallenge.NumbleBankingServerChallengeAppl
 import com.example.numblebankingserverchallenge.domain.Member
 import com.example.numblebankingserverchallenge.dto.LoginRequest
 import com.example.numblebankingserverchallenge.dto.SignUpRequest
-import com.example.numblebankingserverchallenge.exception.UserExistsException
-import com.example.numblebankingserverchallenge.exception.UserNotFoundException
+import com.example.numblebankingserverchallenge.exception.CustomException
 import com.example.numblebankingserverchallenge.repository.friendship.FriendshipRepository
 import com.example.numblebankingserverchallenge.repository.member.MemberRepository
 import org.assertj.core.api.Assertions.*
@@ -63,7 +62,7 @@ class MemberServiceIntegrationTest @Autowired constructor(
         assertThat(createdUser?.username).isEqualTo(signUpRequest.username)
         val signUpRequest2 = SignUpRequest(username, "23456")
 
-        assertThrows<UserExistsException> { memberService.createUser(signUpRequest2) }
+        assertThrows<CustomException.UserNotFoundException> { memberService.createUser(signUpRequest2) }
 
     }
 
@@ -119,7 +118,7 @@ class MemberServiceIntegrationTest @Autowired constructor(
         val savedFriend = memberRepository.findByUsername("friend2")
         assertThat(saveduser).isNotNull
         assertThat(savedFriend).isNull()
-        assertThrows<UserNotFoundException> { memberService.addFriend(saveduser!!.id, UUID.randomUUID()) }
+        assertThrows<CustomException.UserNotFoundException> { memberService.addFriend(saveduser!!.id, UUID.randomUUID()) }
 
     }
 
