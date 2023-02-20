@@ -7,9 +7,11 @@ import jakarta.persistence.FetchType
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.OneToMany
+import jakarta.persistence.Table
 import jakarta.persistence.Version
 
 @Entity
+@Table(name="account")
 class Account(owner:Member,name:String, balance:Long = 0L) :PrimaryKeyEntity(){
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

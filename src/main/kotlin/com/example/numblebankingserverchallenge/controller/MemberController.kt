@@ -8,6 +8,7 @@ import com.example.numblebankingserverchallenge.exception.CustomException
 import com.example.numblebankingserverchallenge.exception.SessionLoginChecker
 import com.example.numblebankingserverchallenge.service.MemberService
 import jakarta.servlet.http.HttpSession
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
@@ -18,30 +19,19 @@ import org.springframework.web.bind.annotation.RestController
 import java.util.UUID
 
 @RestController
-class MemberController (private val memberService: MemberService, private val sessionLoginChecker: SessionLoginChecker){
-
+class MemberController (private val memberService: MemberService){
     @PostMapping("/signup")
     fun signup(@RequestBody signUpRequest: SignUpRequest):ResponseEntity<MemberDTO>{
         return memberService.createUser(signUpRequest).let{ ResponseEntity.ok().body(it)}
     }
 
-//    @GetMapping("/login")
-//    fun login(@RequestBody loginRequest:LoginRequest, session: HttpSession):ResponseEntity<MemberDTO>{
-//        val MemberDTO = memberService.login(loginRequest) ?: return ResponseEntity.badRequest().build()
-//        session.setAttribute("user", MemberDTO)
-//        return ResponseEntity.ok().body(MemberDTO)
-//
-//    }
-
     @GetMapping("/users/friends")
-    fun friendsList(session: HttpSession):ResponseEntity<List<MemberDTO>>{
-        val member = sessionLoginChecker.sessionLoginChecker(session)
+    fun friendsList(@SessionLoginChecker member:MemberDTO):ResponseEntity<List<MemberDTO>>{
         return memberService.getFriends(member.id).let { ResponseEntity.ok().body(it) }
     }
 
     @PostMapping("/users/friends/{friendId}")
-    fun addFriend(@PathVariable("friendId") friendId:UUID, session: HttpSession):ResponseEntity<FriendDTO>{
-        val user = sessionLoginChecker.sessionLoginChecker(session)
-        return memberService.addFriend(user.id,friendId).let { ResponseEntity.ok(it) }
+    fun addFriend(@PathVariable("friendId") friendId:UUID, @SessionLoginChecker member: MemberDTO):ResponseEntity<FriendDTO>{
+        return memberService.addFriend(member.id,friendId).let { ResponseEntity.ok(it) }
     }
 }

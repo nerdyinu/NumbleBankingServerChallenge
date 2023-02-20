@@ -8,13 +8,17 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.core.env.Environment
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.AuthenticationProvider
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.authorization.AuthorizationDecision
 import org.springframework.security.authorization.AuthorizationManager
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
+import org.springframework.security.config.authentication.AuthenticationManagerFactoryBean
 import org.springframework.security.core.Authentication
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
+import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.access.intercept.RequestAuthorizationContext
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
@@ -24,35 +28,27 @@ import java.util.function.Supplier
 
 @EnableWebSecurity
 @Configuration
-
 class WebSecurityConfig @Autowired constructor(val memberService: MemberService) {
-
-
     @Bean
-    fun securityFilterChain(http: HttpSecurity,authenticationConfiguration: AuthenticationConfiguration): SecurityFilterChain {
-
+    fun securityFilterChain(http: HttpSecurity,authConfig: AuthenticationConfiguration): SecurityFilterChain {
 
        http.csrf()
             .disable()
-//            .authorizeHttpRequests().requestMatchers("/users/**").permitAll()
             .authorizeHttpRequests().requestMatchers("/signup", "/login").permitAll()
-           .anyRequest().authenticated()
+            .anyRequest().authenticated()
             .and()
-            .userDetailsService(memberService)
-            .sessionManagement().invalidSessionUrl("/login").and()
-            .addFilterAt(authenticationFilter(authenticationConfiguration.authenticationManager), UsernamePasswordAuthenticationFilter::class.java)
+           .addFilterAt(authenticationFilter(authConfig.authenticationManager), UsernamePasswordAuthenticationFilter::class.java)
             .headers().frameOptions().disable()
-
         return http.build()
 
     }
 
 
-
-    fun authenticationFilter(authenticationManager: AuthenticationManager):UsernamePasswordAuthenticationFilter {
-
-        return AuthenticationFilter(memberService).also { it.setAuthenticationManager(authenticationManager) }
+//    @Bean
+    fun authenticationFilter(authManager:AuthenticationManager):UsernamePasswordAuthenticationFilter {
+        return AuthenticationFilter(memberService).also { it.setAuthenticationManager(authManager) }
     }
+
 
     private fun hasIpAddress(ipAddress: String): AuthorizationManager<RequestAuthorizationContext>? {
         val ipAddressMatcher = IpAddressMatcher(ipAddress)

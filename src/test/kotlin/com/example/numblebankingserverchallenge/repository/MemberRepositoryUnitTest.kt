@@ -1,31 +1,19 @@
 package com.example.numblebankingserverchallenge.repository
 
+
+import com.example.numblebankingserverchallenge.JpaTestConfig
 import com.example.numblebankingserverchallenge.domain.Member
 import com.example.numblebankingserverchallenge.repository.member.MemberRepository
-import com.ninjasquad.springmockk.MockkBean
-import io.mockk.every
-import io.mockk.impl.annotations.MockK
-import io.mockk.junit5.MockKExtension
-import io.mockk.mockk
-import io.mockk.verify
-import jakarta.persistence.EntityManager
-import jakarta.persistence.PersistenceContext
-import jakarta.persistence.TypedQuery
-import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.*
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager
-import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.test.context.ActiveProfiles
-import org.springframework.test.context.junit.jupiter.SpringExtension
-
+import org.springframework.context.annotation.Import
 
 
 @DataJpaTest
+@Import(JpaTestConfig::class)
 class MemberRepositoryUnitTest @Autowired  constructor(
     private val memberRepository: MemberRepository,
     private val entityManager: TestEntityManager

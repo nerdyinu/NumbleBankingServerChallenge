@@ -70,7 +70,7 @@ class MemberControllerIntegrationTest @Autowired constructor(
     @Test fun `친구 추가 실패 - 존재하지 않는 친구Id`(){}
     @Test
     @WithMockUser
-    fun `존재하지 않는 친구id인 경우 400`(){
+    fun `존재하지 않는 친구id인 경우 404`(){
 //        val friend = Member("friend1", passwordEncoder.encode("23456value"))
         val friendship = Friendship(member, friend)
         val randomId = UUID.randomUUID()

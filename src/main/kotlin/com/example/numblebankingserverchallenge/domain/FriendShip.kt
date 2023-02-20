@@ -5,8 +5,10 @@ import jakarta.persistence.Entity
 import jakarta.persistence.FetchType
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
+import jakarta.persistence.Table
 
 @Entity
+@Table(name="friendship")
 class Friendship(user:Member, friend:Member):PrimaryKeyEntity() {
     @JsonBackReference
     @ManyToOne(fetch = FetchType.LAZY, optional = false )

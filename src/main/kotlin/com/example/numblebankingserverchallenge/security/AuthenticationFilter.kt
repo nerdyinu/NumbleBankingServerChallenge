@@ -49,6 +49,7 @@ class AuthenticationFilter (val memberService: MemberService): UsernamePasswordA
 
         request?.session?.setAttribute("user", userDetails)
 
+
         //        val key = env.getProperty("token.secret").let{
 //            Decoders.BASE64.decode(it).let{ bytes -> Keys.hmacShaKeyFor(bytes)}
 //        }

@@ -37,7 +37,7 @@ dependencies {
     implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
     implementation ("org.jetbrains.kotlin:kotlin-reflect:1.7.22")
 
-    implementation("mysql:mysql-connector-java")
+
     //querydsl
     implementation("com.querydsl:querydsl-jpa:5.0.0:jakarta")
     kapt("com.querydsl:querydsl-apt:5.0.0:jakarta")
@@ -48,11 +48,8 @@ dependencies {
     implementation("io.jsonwebtoken:jjwt-impl:0.11.5")
     implementation("io.jsonwebtoken:jjwt-gson:0.11.5")
     //test
-    testImplementation("com.h2database:h2")
-//    testImplementation("org.testcontainers:junit-jupiter")
-//    testImplementation("org.testcontainers:mysql:$testContainerVersion")
-
-//    testImplementation("org.apache.derby:derby")
+    implementation("com.h2database:h2")
+//    implementation("mysql:mysql-connector-java")
     testImplementation ("io.mockk:mockk-jvm:1.13.3")
     testImplementation("com.ninja-squad:springmockk:4.0.0")
     testImplementation("org.springframework.boot:spring-boot-starter-test"){exclude(module="mockito-core")}

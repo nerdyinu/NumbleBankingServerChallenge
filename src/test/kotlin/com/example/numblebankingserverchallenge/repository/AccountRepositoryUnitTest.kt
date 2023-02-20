@@ -1,20 +1,17 @@
 package com.example.numblebankingserverchallenge.repository
 
+
+import com.example.numblebankingserverchallenge.JpaTestConfig
 import com.example.numblebankingserverchallenge.domain.Account
 import com.example.numblebankingserverchallenge.domain.Member
 import com.example.numblebankingserverchallenge.repository.account.AccountRepository
 import jakarta.persistence.EntityManager
 import jakarta.persistence.EntityManagerFactory
-import jakarta.persistence.LockTimeoutException
-import jakarta.persistence.PersistenceException
 import jakarta.persistence.PersistenceUnit
-import jakarta.persistence.PessimisticLockException
 import kotlinx.coroutines.*
-import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.*
 
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertDoesNotThrow
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager
@@ -24,18 +21,14 @@ import org.springframework.transaction.PlatformTransactionManager
 import org.springframework.transaction.annotation.Propagation
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.transaction.support.TransactionTemplate
-import java.sql.SQLException
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.Executors
-import org.junit.jupiter.api.assertThrows
+import org.junit.jupiter.api.extension.ExtendWith
 
-import org.springframework.dao.PessimisticLockingFailureException
 import org.springframework.test.context.ActiveProfiles
-import org.springframework.test.context.TestPropertySource
+import org.springframework.test.context.junit.jupiter.SpringExtension
 
-import java.lang.Exception
 import java.lang.Runnable
-import java.util.concurrent.TimeUnit
 
 
 @Component
@@ -47,8 +40,9 @@ class AsyncTransaction {
 }
 
 @DataJpaTest
-@TestPropertySource(locations = ["classpath:/application-test.yml"])
-//@ActiveProfiles("test")
+@ExtendWith(SpringExtension::class)
+@Import(JpaTestConfig::class)
+@ActiveProfiles("test")
 @Transactional
 class AccountRepositoryUnitTest @Autowired constructor(
     private val em: TestEntityManager,
@@ -143,7 +137,7 @@ class AccountRepositoryUnitTest @Autowired constructor(
     }
 
     @Test
-    fun `test findById does not trigger deadlock`() {
+    fun  `test findById does not trigger deadlock`() {
 
         val member = Member("inu", encryptedPassword = "encrypted")
         val account = Account(member, "account1")

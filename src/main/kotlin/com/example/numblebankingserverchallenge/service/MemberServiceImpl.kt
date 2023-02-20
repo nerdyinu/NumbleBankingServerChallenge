@@ -12,6 +12,7 @@ import com.example.numblebankingserverchallenge.exception.CustomException
 
 import com.example.numblebankingserverchallenge.repository.friendship.FriendshipRepository
 import com.example.numblebankingserverchallenge.repository.member.MemberRepository
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.core.userdetails.User
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.crypto.password.PasswordEncoder
@@ -20,12 +21,13 @@ import org.springframework.transaction.annotation.Transactional
 import java.util.UUID
 
 @Service
-class MemberServiceImpl(
-    private val memberRepository: MemberRepository,
+class MemberServiceImpl (
+
     private val friendshipRepository: FriendshipRepository,
     private val passwordEncoder: PasswordEncoder
-) :
-    MemberService {
+) : MemberService {
+    @Autowired
+    lateinit var memberRepository:MemberRepository
     override fun findByUsername(username: String): MemberDTO? =
         memberRepository.findByUsername(username)?.let(::MemberDTO)
 
@@ -36,20 +38,12 @@ class MemberServiceImpl(
 
     override fun createUser(signUpRequest: SignUpRequest): MemberDTO {
         memberRepository.findByUsername(signUpRequest.username)?.let{throw CustomException.UserExistsException()}
-
         val encrypted = passwordEncoder.encode(signUpRequest.pw)
         val member = Member(signUpRequest.username, encrypted).let { memberRepository.save(it) }
         return MemberDTO(member)
 
     }
 
-    override fun login(loginRequest: LoginRequest): MemberDTO? {
-
-        val user = memberRepository.findByUsername(loginRequest.username) ?: return null
-
-        return if (passwordEncoder.matches(loginRequest.pw, user.encryptedPassword)) MemberDTO(user) else null
-
-    }
 
     override fun getFriends(id: UUID): List<MemberDTO> {
         val findMember = memberRepository.findById(id).orElseThrow { CustomException.UserNotFoundException() }

@@ -1,26 +1,30 @@
+
 spring:
+  config:
+    activate:
+      on-profile: test
   datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url:  jdbc:mysql://localhost:3306/banking?characterEncoding=UTF-8&characterSetResults=UTF-8&useSSL=false
-    username: root
-    password: 32518458
+    url: jdbc:h2:tcp://localhost/~/jpashop
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+
   jpa:
+    defer-datasource-initialization: true
     hibernate:
-      ddl-auto: create
+      ddl-auto: create-drop
     properties:
       format_sql: true
       show_sql: true
       hibernate:
         use_sql_comments: true
-
+        dialect: org.hibernate.dialect.MySQLDialect
     show-sql: true
-    database: mysql
-  config:
-    activate:
-      on-profile: local
+    database-platform: MySQL
 
-logging.level:
-  #    org.hibernate.sql: debug
-  org.hibernate.sql: info
-  org.hibernate.jdbc.bind: trace
+logging:
+  level:
+    #    org.hibernate.sql: debug
+    org.hibernate.sql: info
+    org.hibernate.jdbc.bind: trace
 

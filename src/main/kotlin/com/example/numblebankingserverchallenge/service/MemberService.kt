@@ -14,7 +14,6 @@ import java.util.UUID
 interface MemberService:UserDetailsService {
     fun createUser(signUpRequest: SignUpRequest):MemberDTO
     fun findByUsername(username:String):MemberDTO?
-    fun login(loginRequest: LoginRequest):MemberDTO?
     fun getFriends(id:UUID):List<MemberDTO>
     fun addFriend(userId:UUID,friendId:UUID):FriendDTO
 }

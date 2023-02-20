@@ -11,7 +11,7 @@ import jakarta.persistence.Table
 import org.hibernate.annotations.BatchSize
 
 @Entity
-@Table(name= "MEMBER", indexes = [Index(name="idx_username", columnList = "username")])
+@Table(name= "member", indexes = [Index(name="idx_username", columnList = "username")])
 class Member(username:String, encryptedPassword:String):PrimaryKeyEntity() {
     @Column(nullable = false, unique = true)
     var username:String =username

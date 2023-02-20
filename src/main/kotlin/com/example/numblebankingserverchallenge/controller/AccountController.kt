@@ -4,6 +4,7 @@ import com.example.numblebankingserverchallenge.dto.AccountDTO
 import com.example.numblebankingserverchallenge.dto.MemberDTO
 import com.example.numblebankingserverchallenge.dto.TransactionDTO
 import com.example.numblebankingserverchallenge.exception.CustomException
+import com.example.numblebankingserverchallenge.exception.SessionLoginChecker
 
 import com.example.numblebankingserverchallenge.service.AccountService
 import jakarta.servlet.http.HttpSession
@@ -17,24 +18,22 @@ import org.springframework.web.bind.annotation.RestController
 import java.util.UUID
 
 @RestController
-class AccountController(private val accountService: AccountService) {
+class AccountController(private val accountService: AccountService, private val sessionLoginChecker: SessionLoginChecker) {
     @GetMapping("/accounts/{accountId}")
-    fun checkBalance(session: HttpSession, @PathVariable("accountId") accountId: UUID): ResponseEntity<AccountDTO> {
-        val user =
-            session.getAttribute("user") as? MemberDTO ?: throw CustomException.NotLoggedInException()
+    fun checkBalance(session: HttpSession, @PathVariable("accountId") accountId: UUID, @SessionLoginChecker member: MemberDTO): ResponseEntity<AccountDTO> {
         return accountService.findAccountById(accountId).let { ResponseEntity.ok().body(it) }
     }
 
     @PostMapping("/account")
-    fun createAccount(session: HttpSession, @RequestBody name: String, @RequestBody amount: Long): ResponseEntity<AccountDTO> {
-        val member = session.getAttribute("user") as? MemberDTO ?: throw CustomException.NotLoggedInException()
+    fun createAccount(session: HttpSession, @RequestBody name: String, @RequestBody amount: Long , @SessionLoginChecker member:MemberDTO): ResponseEntity<AccountDTO> {
         return accountService.createAccount(member.id, name,amount).let { ResponseEntity.status(HttpStatus.OK).body(it) }
     }
     @PostMapping("/account/{fromAccountId}/{toAccountId}")
     fun transfer(
         @PathVariable("fromAccountId") fromAccountId: UUID,
         @PathVariable("toAccountId") toAccountId: UUID,
-        @RequestBody amount:Long
+        @RequestBody amount:Long,
+        @SessionLoginChecker member: MemberDTO
     ): ResponseEntity<TransactionDTO> {
         return accountService.createTransaction(fromAccountId,toAccountId,amount).let{ ResponseEntity.status(HttpStatus.OK).body(it)}
     }

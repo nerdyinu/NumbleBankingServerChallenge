@@ -1,18 +1,21 @@
 package com.example.numblebankingserverchallenge.repository
 
+
+import com.example.numblebankingserverchallenge.JpaTestConfig
 import com.example.numblebankingserverchallenge.domain.Friendship
 import com.example.numblebankingserverchallenge.domain.Member
 import com.example.numblebankingserverchallenge.repository.friendship.FriendshipRepository
 import com.example.numblebankingserverchallenge.repository.member.MemberRepository
-import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager
+import org.springframework.context.annotation.Import
 
 @DataJpaTest
+@Import(JpaTestConfig::class)
 class FriendshipRepositoryUnitTest @Autowired constructor(
     private val entityManager: TestEntityManager,
     private val memberRepository: MemberRepository,

@@ -3,6 +3,7 @@ package com.example.numblebankingserverchallenge.domain
 import jakarta.persistence.*
 
 @Entity
+@Table(name="transaction")
 class Transaction(fromAccount:Account,toAccount:Account,checkAmount:Long) :PrimaryKeyEntity(){
 
 
