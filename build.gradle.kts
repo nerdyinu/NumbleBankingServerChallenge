@@ -48,8 +48,8 @@ dependencies {
     implementation("io.jsonwebtoken:jjwt-impl:0.11.5")
     implementation("io.jsonwebtoken:jjwt-gson:0.11.5")
     //test
-    implementation("com.h2database:h2")
-//    implementation("mysql:mysql-connector-java")
+    testImplementation("com.h2database:h2")
+    implementation("org.mariadb.jdbc:mariadb-java-client")
     testImplementation ("io.mockk:mockk-jvm:1.13.3")
     testImplementation("com.ninja-squad:springmockk:4.0.0")
     testImplementation("org.springframework.boot:spring-boot-starter-test"){exclude(module="mockito-core")}
