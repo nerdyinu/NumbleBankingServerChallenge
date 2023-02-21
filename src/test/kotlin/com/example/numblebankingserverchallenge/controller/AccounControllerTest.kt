@@ -7,8 +7,10 @@ import com.example.numblebankingserverchallenge.config.SessionLoginChecker
 import com.example.numblebankingserverchallenge.service.AccountService
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.ninjasquad.springmockk.MockkBean
+import io.mockk.core.ValueClassSupport.boxedValue
 import io.mockk.every
 import io.mockk.junit5.MockKExtension
+import io.mockk.verify
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -41,7 +43,7 @@ class AccounControllerTest @Autowired constructor(
     val friend = Member("friend", "encrypted2")
     val returnMember = MemberDTO(member)
     val account = Account(member, "account1", AccountBalance(3000L))
-
+    val friendAccount = Account(friend, "ac2", AccountBalance(3000L))
 
     val returnAccount = AccountDTO(account)
     val mySession = mapOf("user" to returnMember)
@@ -56,27 +58,32 @@ fun checkBalance( @PathVariable("accountId") accountId: UUID, @SessionLoginCheck
 }*/
     @Test
     @WithMockUser
-    fun `세션이 존재한다면 정상적으로 AccountDTO 반환`(){
+    fun `checkBalance should return account balance`() {
         every { accountService.findAccountById(account.id) } returns returnAccount
-        mockMvc.get("/accounts/${account.id}"){
-            accept= MediaType.APPLICATION_JSON
+        mockMvc.get("/accounts/${account.id}") {
+            accept = MediaType.APPLICATION_JSON
             sessionAttrs = mySession
         }.andExpect {
             status { isOk() }
             content { contentType(MediaType.APPLICATION_JSON) }
-            content{ json(mapper.writeValueAsString(returnAccount))}
+            jsonPath("$.accountId") { value(account.id.toString()) }
+            jsonPath("$.ownerId") { value(member.id.toString()) }
+            jsonPath("$.name") { value(account.name) }
+            jsonPath("$.balance") { value(account.balance.balance.toInt()) }
         }
+        verify {accountService.findAccountById(account.id) gi  }
     }
 
     @Test
     @WithMockUser
-    fun `checkBalance - 세션이 존재하지 않는다면 401 UnAuthorized`(){
+    fun `checkBalance - when session doesnt exist return 401 UnAuthorized`(){
         every { accountService.findAccountById(account.id) } returns returnAccount
         mockMvc.get("/accounts/${account.id}"){
             accept= MediaType.APPLICATION_JSON
         }.andExpect {
             status { isUnauthorized()}
         }
+        verify (exactly = 0){  accountService.findAccountById(account.id) }
     }
     /*
 *     @PostMapping("/account")
@@ -86,7 +93,7 @@ fun createAccount(@RequestBody accountRequest: AccountCreateRequest, @SessionLog
 * */
     @Test
     @WithMockUser
-    fun `createAccount - 세션이 존재하지 않는 경우 401 UnAuthorized`(){
+    fun `createAccount - when session doesnt exist should return 401 UnAuthorized`(){
         val accountCreateRequest = AccountCreateRequest( account.name, account.balance)
         every { accountService.createAccount(member.id,accountCreateRequest) } returns returnAccount
         mockMvc.post("/account"){
@@ -94,10 +101,11 @@ fun createAccount(@RequestBody accountRequest: AccountCreateRequest, @SessionLog
             contentType = MediaType.APPLICATION_JSON
             content = mapper.writeValueAsString(accountCreateRequest)
         }.andExpect { status { isUnauthorized() } }
+        verify(exactly = 0){accountService.createAccount(member.id,accountCreateRequest) }
     }
     @Test
     @WithMockUser
-    fun `createAccount - 세션이 존재하는 경우 AccountDTO 반환`(){
+    fun `createAccount - when session exists should return AccountDTO`(){
         val accountCreateRequest = AccountCreateRequest( account.name, account.balance)
         every { accountService.createAccount(member.id,accountCreateRequest) } returns returnAccount
         mockMvc.post("/account"){
@@ -108,8 +116,12 @@ fun createAccount(@RequestBody accountRequest: AccountCreateRequest, @SessionLog
         }.andExpect {
             status { isOk()}
             content { contentType(MediaType.APPLICATION_JSON) }
-            content{ json(mapper.writeValueAsString(returnAccount))}
+            jsonPath("$.accountId") { value(account.id.toString()) }
+            jsonPath("$.ownerId") { value(member.id.toString()) }
+            jsonPath("$.name") { value(account.name) }
+            jsonPath("$.balance") { value(account.balance.balance.toInt()) }
         }
+        verify { accountService.createAccount(member.id,accountCreateRequest) }
     }
 
     /*@PostMapping("/account/transfer")
@@ -131,11 +143,12 @@ fun createAccount(@RequestBody accountRequest: AccountCreateRequest, @SessionLog
             contentType = MediaType.APPLICATION_JSON
             content = mapper.writeValueAsString(transactionRequest)
         }.andExpect { status { isUnauthorized() } }
+        verify(exactly = 0) { accountService.createTransaction(transactionRequest) }
     }
     @Test
     @WithMockUser
     fun `transfer- 세션 있을 시 정상적으로 TransactionDTO 반환`(){
-        val transactionRequest = TransactionRequest(member.id, friend.id, 3000L )
+        val transactionRequest = TransactionRequest(account.id, friendAccount.id, 3000L )
         val returnTransaction  = TransactionDTO(transactionRequest.fromAccountId,transactionRequest.toAccountId,transactionRequest.amount)
         every { accountService.createTransaction(transactionRequest) } returns returnTransaction
         mockMvc.post("/account/transfer"){
@@ -146,7 +159,10 @@ fun createAccount(@RequestBody accountRequest: AccountCreateRequest, @SessionLog
         }.andExpect {
             status { isOk() }
             content { contentType(MediaType.APPLICATION_JSON) }
-            content { json(mapper.writeValueAsString(returnTransaction)) }
+            jsonPath("$.fromAccountId"){value(transactionRequest.fromAccountId.toString())}
+            jsonPath("$.toAccountId"){value(transactionRequest.toAccountId.toString())}
+            jsonPath("$.amount"){value(transactionRequest.amount.toInt())}
         }
+        verify { accountService.createTransaction(transactionRequest) }
     }
 }
