@@ -4,6 +4,8 @@ package com.example.numblebankingserverchallenge.repository
 import com.example.numblebankingserverchallenge.JpaTestConfig
 import com.example.numblebankingserverchallenge.domain.Account
 import com.example.numblebankingserverchallenge.domain.Member
+import com.example.numblebankingserverchallenge.dto.AccountBalance
+import com.example.numblebankingserverchallenge.exception.CustomException
 import com.example.numblebankingserverchallenge.repository.account.AccountRepository
 import jakarta.persistence.EntityManager
 import jakarta.persistence.EntityManagerFactory
@@ -12,6 +14,8 @@ import kotlinx.coroutines.*
 import org.assertj.core.api.Assertions.*
 
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertDoesNotThrow
+import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager
@@ -109,7 +113,7 @@ class AccountRepositoryUnitTest @Autowired constructor(
     fun `test findByIdWithLock`() {
         runBlocking {
             val member = Member("inu", encryptedPassword = "encrypted")
-            val account = Account(member, "account1")
+            val account = Account(member, "account1", AccountBalance(0L))
             em.persist(member)
             em.persist(account)
             em.flush()
@@ -119,20 +123,21 @@ class AccountRepositoryUnitTest @Autowired constructor(
                 val transactionTemplate = TransactionTemplate(transactionManager)
                 transactionTemplate.execute {
                     val account1 = accountRepository.findByIdWithLock(account.id)
-                    Thread.sleep(5000)
+                    account1?.addAmount(5000L)
                 }
             }
-//
 
-            delay(1000)
             val deferred2 = async{
                 val transactionTemplate = TransactionTemplate(transactionManager)
                 transactionTemplate.execute {
                     val account1 = accountRepository.findByIdWithLock(account.id)
+                    account1?.checkAmount(3000L)
                 }
             }
-            assertThatThrownBy { runBlocking { deferred1.await();deferred2.await(); } }
 
+//            assertThatThrownBy { runBlocking { deferred1.await();deferred2.await(); } }
+            awaitAll(deferred1,deferred2)
+            assertThat(account.balance).isEqualTo(2000L)
         }
     }
 
@@ -140,28 +145,38 @@ class AccountRepositoryUnitTest @Autowired constructor(
     fun  `test findById does not trigger deadlock`() {
 
         val member = Member("inu", encryptedPassword = "encrypted")
-        val account = Account(member, "account1")
+        val account = Account(member, "account1",AccountBalance(0L))
         em.persist(member)
         em.persist(account)
         em.flush()
-        executorService.submit {
-            val transactionTemplate = TransactionTemplate(transactionManager)
-            transactionTemplate.execute {
-                val account1 = accountRepository.findById(account.id)
+        runBlocking {
+            val deferred1 = async {
+                val transactionTemplate = TransactionTemplate(transactionManager)
+                transactionTemplate.execute {
+                    val account1 = accountRepository.findByIdWithLock(account.id)
+                    account.addAmount(3000)
+                }
 
-                latch.countDown()
             }
+            val deferred2 = async {
+                val transactionTemplate = TransactionTemplate(transactionManager)
+                transactionTemplate.execute {
+                    val account1 = accountRepository.findByIdWithLock(account.id)
+                    account.addAmount(3000)
+                }
+            }
+           awaitAll(deferred1,deferred2)
+            assertThat(em.find(Account::class.java, account.id).balance).isEqualTo(6000L)
+        }
 
-        }
-        executorService.submit {
-            val transactionTemplate = TransactionTemplate(transactionManager)
-            transactionTemplate.execute {
-                val account1 = accountRepository.findById(account.id)
-                latch.countDown()
-            }
-        }
-        latch.await()
-        assertThat(executorService.isShutdown).isEqualTo(true)
     }
-
+    @Test
+    fun `trying to check amount from a zero-balance account occurs exception`(){
+        val member = Member("inu", encryptedPassword = "encrypted")
+        val account = Account(member, "account1",AccountBalance(0L))
+        em.persist(member)
+        em.persist(account)
+        em.flush()
+        assertThrows<CustomException.BadRequestException> {  accountRepository.findByIdWithLock(account.id)?.checkAmount(3000)}
+    }
 }

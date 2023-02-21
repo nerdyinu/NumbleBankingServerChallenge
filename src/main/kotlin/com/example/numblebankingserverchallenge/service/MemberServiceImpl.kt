@@ -41,7 +41,6 @@ class MemberServiceImpl (
         val encrypted = passwordEncoder.encode(signUpRequest.pw)
         val member = Member(signUpRequest.username, encrypted).let { memberRepository.save(it) }
         return MemberDTO(member)
-
     }
 
 

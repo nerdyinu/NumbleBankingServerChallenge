@@ -1,5 +1,6 @@
 package com.example.numblebankingserverchallenge.domain
 
+import com.example.numblebankingserverchallenge.dto.AccountBalance
 import jakarta.persistence.*
 
 @Entity

@@ -8,6 +8,7 @@ import com.example.numblebankingserverchallenge.dto.SignUpRequest
 import com.example.numblebankingserverchallenge.repository.member.MemberRepository
 import com.example.numblebankingserverchallenge.service.MemberService
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import io.mockk.every
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
@@ -42,7 +43,7 @@ class MemberControllerIntegrationTest @Autowired constructor(
     val friend = Member(friendSignup.username, passwordEncoder.encode(friendSignup.pw))
     val returnMember: MemberDTO = MemberDTO(member)
     val loginRequest = LoginRequest(signUpRequest.username, "12345value")
-    val mapper = ObjectMapper()
+    val mapper = jacksonObjectMapper()
     val session = MockHttpSession()
     val mySession= mapOf("user" to returnMember)
     @BeforeEach

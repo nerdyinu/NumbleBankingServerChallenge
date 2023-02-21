@@ -1,7 +1,11 @@
 package com.example.numblebankingserverchallenge.domain
 
+import com.example.numblebankingserverchallenge.dto.AccountBalance
+import com.example.numblebankingserverchallenge.exception.CustomException
 import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
+import jakarta.persistence.Embeddable
+import jakarta.persistence.Embedded
 import jakarta.persistence.Entity
 import jakarta.persistence.FetchType
 import jakarta.persistence.JoinColumn
@@ -12,7 +16,7 @@ import jakarta.persistence.Version
 
 @Entity
 @Table(name="account")
-class Account(owner:Member,name:String, balance:Long = 0L) :PrimaryKeyEntity(){
+class Account(owner:Member,name:String, balance:AccountBalance = AccountBalance(0L)) :PrimaryKeyEntity(){
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name="owner_id")
@@ -25,14 +29,20 @@ class Account(owner:Member,name:String, balance:Long = 0L) :PrimaryKeyEntity(){
     private val _transactions:MutableList<Transaction> = mutableListOf()
     val transactions:List<Transaction> get() = _transactions.toList()
 
-    @Column(nullable = false)
-    private var _balance:Long = balance
-    val balance:Long
+    @Column(nullable = false, name = "balance")
+    private var _balance:AccountBalance = balance
+    val balance:AccountBalance
         get() = _balance
 
     @Version
     var versionNo:Long = 0L
 
-    fun checkAmount(amount:Long){_balance-=amount}
-    fun addAmount(amount: Long){_balance+=amount}
+    fun checkAmount(amount:Long){
+        if(_balance.balance<amount)throw CustomException.BadRequestException()
+        _balance = AccountBalance(_balance.balance-amount)
+    }
+    fun addAmount(amount: Long){
+
+        _balance = AccountBalance(_balance.balance+amount)
+    }
 }

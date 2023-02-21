@@ -2,8 +2,7 @@ package com.example.numblebankingserverchallenge.service
 
 import com.example.numblebankingserverchallenge.domain.Account
 import com.example.numblebankingserverchallenge.domain.Transaction
-import com.example.numblebankingserverchallenge.dto.AccountDTO
-import com.example.numblebankingserverchallenge.dto.TransactionDTO
+import com.example.numblebankingserverchallenge.dto.*
 import com.example.numblebankingserverchallenge.exception.CustomException
 import com.example.numblebankingserverchallenge.mockapi.NumbleAlarmService
 import com.example.numblebankingserverchallenge.repository.account.AccountRepository
@@ -22,22 +21,23 @@ class AccountServiceImpl(
     private val numbleAlarmService: NumbleAlarmService
 ) : AccountService {
     override fun findAccountById(accountId: UUID): AccountDTO? =
-        accountRepository.findByIdJoinOwner(accountId)?.let(::AccountDTO)
+        accountRepository.findByIdJoinOwner(accountId)?.let(::AccountDTO) ?: throw CustomException.AccountNotFoundException()
 
 
     override fun findAllByOwnerId(ownerId: UUID): List<AccountDTO> =
         accountRepository.findByOwnerId(ownerId).map(::AccountDTO)
 
     @Transactional
-    override fun createAccount(ownerId: UUID, name: String, amount: Long): AccountDTO {
+    override fun createAccount(ownerId: UUID, accountCreateRequest: AccountCreateRequest): AccountDTO {
         val owner = memberRepository.findById(ownerId).orElseThrow { CustomException.UserNotFoundException() }
-        return accountRepository.save(Account(owner, name,amount)).let(::AccountDTO)
+        return accountRepository.save(Account(owner, accountCreateRequest.name, accountCreateRequest.amount)).let(::AccountDTO)
     }
 
     @Transactional
-    override fun createTransaction(fromAccountId: UUID, toAccountId: UUID, amount: Long): TransactionDTO {
-        val fromAccount = accountRepository.findByIdWithLock(fromAccountId) ?: throw CustomException.AccountNotFoundException()
-        val toAccount = accountRepository.findByIdWithLock(toAccountId)?: throw CustomException.AccountNotFoundException()
+    override fun createTransaction(transactionRequest: TransactionRequest): TransactionDTO {
+        val (fromAccountId, toAccountId, amount) = transactionRequest
+        val fromAccount = accountRepository.findById(fromAccountId).orElse(null) ?: throw CustomException.AccountNotFoundException()
+        val toAccount = accountRepository.findById(toAccountId).orElse(null)?: throw CustomException.AccountNotFoundException()
         val transaction = Transaction(fromAccount, toAccount, amount).let { transactionRepository.save(it) } //shared-lock
         fromAccount.checkAmount(amount) // x-lock : deadlock
         toAccount.addAmount(amount)

@@ -1,15 +1,10 @@
 package com.example.numblebankingserverchallenge.controller
 
 import com.example.numblebankingserverchallenge.dto.FriendDTO
-import com.example.numblebankingserverchallenge.dto.LoginRequest
 import com.example.numblebankingserverchallenge.dto.SignUpRequest
 import com.example.numblebankingserverchallenge.dto.MemberDTO
-import com.example.numblebankingserverchallenge.exception.CustomException
-import com.example.numblebankingserverchallenge.exception.SessionLoginChecker
+import com.example.numblebankingserverchallenge.config.SessionLoginChecker
 import com.example.numblebankingserverchallenge.service.MemberService
-import jakarta.servlet.http.HttpSession
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable

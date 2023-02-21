@@ -3,10 +3,7 @@ package com.example.numblebankingserverchallenge.service
 import com.example.numblebankingserverchallenge.NumbleBankingServerChallengeApplication
 import com.example.numblebankingserverchallenge.domain.Account
 import com.example.numblebankingserverchallenge.domain.Member
-import com.example.numblebankingserverchallenge.dto.AccountDTO
-import com.example.numblebankingserverchallenge.dto.MemberDTO
-import com.example.numblebankingserverchallenge.dto.SignUpRequest
-import com.example.numblebankingserverchallenge.dto.TransactionDTO
+import com.example.numblebankingserverchallenge.dto.*
 import com.example.numblebankingserverchallenge.repository.account.AccountRepository
 import com.example.numblebankingserverchallenge.repository.member.MemberRepository
 import com.example.numblebankingserverchallenge.repository.transaction.TransactionRepository
@@ -52,7 +49,7 @@ class AccountServiceTest @Autowired constructor(
     * */
     @Test
     fun `should create an account`(){
-        val dto=accountService.createAccount(owner.id, "ac2")
+        val dto=accountService.createAccount(owner.id, AccountCreateRequest("ac2", AccountBalance(0L)))
         val ac=accountRepository.findById(dto.accountId).orElse(null)
         assertThat(ac).isNotNull
         assertThat(ac.id).isEqualTo(dto.accountId)
@@ -90,15 +87,16 @@ class AccountServiceTest @Autowired constructor(
     fun `should createTransaction in concurrent env`(){
         lateinit var res:List<TransactionDTO>
         val friend = memberRepository.save(Member("friend", "ecpw1"))
-        val ac1 = accountRepository.save(Account(owner,"ac1",3000))
-        val friendac = accountRepository.save(Account(friend,"friendac",3000))
+        val ac1 = accountRepository.save(Account(owner,"ac1",AccountBalance(3000L)))
+        val friendac = accountRepository.save(Account(friend,"friendac",AccountBalance(3000L)))
+
         runBlocking {
             val job1= async {
-                accountService.createTransaction(ac1.id, friendac.id, 1000 )
+                accountService.createTransaction(TransactionRequest(ac1.id, friendac.id, 1000 ))
             }
 
             val job2=async {
-                accountService.createTransaction(ac1.id,friendac.id,2000)
+                accountService.createTransaction(TransactionRequest(ac1.id,friendac.id,2000))
             }
             res=awaitAll(job1,job2)
         }

@@ -1,13 +1,9 @@
 package com.example.numblebankingserverchallenge.controller
 
-import com.example.numblebankingserverchallenge.dto.AccountDTO
-import com.example.numblebankingserverchallenge.dto.MemberDTO
-import com.example.numblebankingserverchallenge.dto.TransactionDTO
-import com.example.numblebankingserverchallenge.exception.CustomException
-import com.example.numblebankingserverchallenge.exception.SessionLoginChecker
+import com.example.numblebankingserverchallenge.dto.*
+import com.example.numblebankingserverchallenge.config.SessionLoginChecker
 
 import com.example.numblebankingserverchallenge.service.AccountService
-import jakarta.servlet.http.HttpSession
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
@@ -18,24 +14,22 @@ import org.springframework.web.bind.annotation.RestController
 import java.util.UUID
 
 @RestController
-class AccountController(private val accountService: AccountService, private val sessionLoginChecker: SessionLoginChecker) {
+class AccountController(private val accountService: AccountService) {
     @GetMapping("/accounts/{accountId}")
-    fun checkBalance(session: HttpSession, @PathVariable("accountId") accountId: UUID, @SessionLoginChecker member: MemberDTO): ResponseEntity<AccountDTO> {
+    fun checkBalance(@PathVariable("accountId") accountId: UUID, @SessionLoginChecker member: MemberDTO): ResponseEntity<AccountDTO> {
         return accountService.findAccountById(accountId).let { ResponseEntity.ok().body(it) }
     }
 
     @PostMapping("/account")
-    fun createAccount(session: HttpSession, @RequestBody name: String, @RequestBody amount: Long , @SessionLoginChecker member:MemberDTO): ResponseEntity<AccountDTO> {
-        return accountService.createAccount(member.id, name,amount).let { ResponseEntity.status(HttpStatus.OK).body(it) }
+    fun createAccount(@RequestBody accountRequest: AccountCreateRequest, @SessionLoginChecker member:MemberDTO): ResponseEntity<AccountDTO> {
+        return accountService.createAccount(member.id, accountRequest).let { ResponseEntity.status(HttpStatus.OK).body(it) }
     }
-    @PostMapping("/account/{fromAccountId}/{toAccountId}")
+    @PostMapping("/account/transfer")
     fun transfer(
-        @PathVariable("fromAccountId") fromAccountId: UUID,
-        @PathVariable("toAccountId") toAccountId: UUID,
-        @RequestBody amount:Long,
+        @RequestBody transactionRequest: TransactionRequest,
         @SessionLoginChecker member: MemberDTO
     ): ResponseEntity<TransactionDTO> {
-        return accountService.createTransaction(fromAccountId,toAccountId,amount).let{ ResponseEntity.status(HttpStatus.OK).body(it)}
+        return accountService.createTransaction(transactionRequest).let{ ResponseEntity.status(HttpStatus.OK).body(it)}
     }
 
 }

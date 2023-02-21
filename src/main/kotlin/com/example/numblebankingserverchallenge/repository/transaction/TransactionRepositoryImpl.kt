@@ -15,7 +15,7 @@ class TransactionRepositoryImpl(private val jpaQueryFactory: JPAQueryFactory):Tr
 
     override fun findByIdFetchAccounts(transactionId: UUID):Transaction? {
         val account2 = QAccount("account2")
-        return jpaQueryFactory.selectFrom(transaction).where(transaction.id.eq(transactionId)).leftJoin(transaction.fromAccount, account).leftJoin(transaction.toAccount, account2).fetchJoin().fetchOne()
+        return jpaQueryFactory.selectFrom(transaction).where(transaction.id.eq(transactionId)).leftJoin(transaction.fromAccount, account).fetchJoin().leftJoin(transaction.toAccount, account2).fetchJoin().fetchOne()
     }
 
     override fun findByOwnerId(ownerId: UUID): List<Transaction> {

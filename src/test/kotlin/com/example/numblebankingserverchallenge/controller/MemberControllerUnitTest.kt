@@ -11,9 +11,11 @@ import com.example.numblebankingserverchallenge.dto.SignUpRequest
 import com.example.numblebankingserverchallenge.repository.member.MemberRepository
 import com.example.numblebankingserverchallenge.service.MemberService
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
 import io.mockk.junit5.MockKExtension
+import io.mockk.verify
 import org.assertj.core.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -48,7 +50,7 @@ class MemberControllerUnitTest @Autowired constructor(
     val member = Member(signUpRequest.username, passwordEncoder.encode(signUpRequest.pw))
     val returnMember: MemberDTO = MemberDTO(member)
     val loginRequest = LoginRequest(signUpRequest.username, signUpRequest.pw)
-    val mapper = ObjectMapper()
+    val mapper = jacksonObjectMapper()
     val userdetails = User(member.username, member.encryptedPassword, arrayListOf())
     val mySession= mapOf("user" to returnMember)
 
@@ -84,8 +86,8 @@ class MemberControllerUnitTest @Autowired constructor(
             contentType = MediaType.APPLICATION_JSON
             content = mapper.writeValueAsString(loginRequest)
         }.andReturn()
-//        verify() { memberService.loadUserByUsername(loginRequest.username) }
-//        verify { memberService.findByUsername(loginRequest.username) }
+        verify{ memberService.loadUserByUsername(loginRequest.username) }
+        verify { memberService.findByUsername(loginRequest.username) }
         val session = result.request.session
         val user =session?.getAttribute("user") as? MemberDTO
 
@@ -94,6 +96,7 @@ class MemberControllerUnitTest @Autowired constructor(
     }
     @Test
     fun `login - 패스워드가 부정확한 경우 실패한다`(){
+        val loginRequest = LoginRequest(signUpRequest.username, "12345value2")
 
 
         every { memberService.loadUserByUsername(loginRequest.username) } returns userdetails
@@ -108,11 +111,9 @@ class MemberControllerUnitTest @Autowired constructor(
     }
 
     @Test
+    @WithMockUser
     fun `getFriends- 인증되었다면 친구목록을 조회한다`(){
         val friend = Member("friend1", "23456value")
-
-        every { memberService.loadUserByUsername(loginRequest.username) } returns userdetails
-        every {memberService.findByUsername(loginRequest.username)} returns returnMember
         every { memberService.getFriends(returnMember.id) } returns listOf(MemberDTO(friend))
         mockMvc.get("/users/friends"){
             contentType = MediaType.APPLICATION_JSON
@@ -125,11 +126,9 @@ class MemberControllerUnitTest @Autowired constructor(
         }
     }
     @Test
+    @WithMockUser
     fun `친구목록 조회- 세션이 없는 경우 401에러`(){
         val friend = Member("friend1","23456value")
-
-        every { memberService.loadUserByUsername(loginRequest.username) } returns userdetails
-        every {memberService.findByUsername(loginRequest.username)} returns returnMember
         every { memberService.getFriends(member.id) } returns listOf(MemberDTO(friend))
         mockMvc.get("/users/friends"){
             contentType = MediaType.APPLICATION_JSON
@@ -139,12 +138,11 @@ class MemberControllerUnitTest @Autowired constructor(
         }
     }
     @Test
+    @WithMockUser
     fun `인증된 경우 친구추가 성공`(){
         val friend = Member("friend1", "23456value")
         val friendship = Friendship(member, friend)
 
-        every { memberService.loadUserByUsername(loginRequest.username) } returns userdetails
-        every {memberService.findByUsername(loginRequest.username)} returns returnMember
         every { memberService.addFriend(member.id, friend.id) } returns FriendDTO(friendship)
         mockMvc.post("/users/friends/${friend.id}"){
             contentType = MediaType.APPLICATION_JSON
@@ -157,10 +155,10 @@ class MemberControllerUnitTest @Autowired constructor(
         }
     }
     @Test
+    @WithMockUser
     fun `세션 로그인 체크 실패 시- 401 UNAUTHORIZED`(){
         val friend = Member("friend1","23456value")
         val friendship = Friendship(member, friend)
-
         every { memberService.addFriend(member.id, friend.id) } returns FriendDTO(friendship)
         mockMvc.post("/users/friends/${friend.id}"){
             contentType = MediaType.APPLICATION_JSON

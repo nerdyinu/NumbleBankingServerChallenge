@@ -62,7 +62,7 @@ class MemberServiceIntegrationTest @Autowired constructor(
         assertThat(createdUser?.username).isEqualTo(signUpRequest.username)
         val signUpRequest2 = SignUpRequest(username, "23456")
 
-        assertThrows<CustomException.UserNotFoundException> { memberService.createUser(signUpRequest2) }
+        assertThrows<CustomException.UserExistsException> { memberService.createUser(signUpRequest2) }
 
     }
 
