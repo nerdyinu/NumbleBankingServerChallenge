@@ -8,9 +8,11 @@ plugins {
     kotlin("plugin.spring") version kotlinVersion
     kotlin("plugin.jpa") version kotlinVersion
     kotlin("kapt") version kotlinVersion
+    id("org.asciidoctor.jvm.convert") version "3.3.2"
     idea
 }
-
+val snippetsDir by extra { file("build/generated-snippets") }
+val asciidoctorExt: Configuration by configurations.creating
 group = "com.example"
 version = "0.0.1-SNAPSHOT"
 java.sourceCompatibility = JavaVersion.VERSION_17
@@ -54,6 +56,10 @@ dependencies {
     testImplementation("com.ninja-squad:springmockk:4.0.0")
     testImplementation("org.springframework.boot:spring-boot-starter-test"){exclude(module="mockito-core")}
     testImplementation("org.springframework.security:spring-security-test")
+    testImplementation("org.springframework.restdocs:spring-restdocs-mockmvc")
+    testImplementation("org.springframework.restdocs:spring-restdocs-core")
+    testImplementation("org.springframework.restdocs:spring-restdocs-asciidoctor")
+
 }
 
 tasks.withType<KotlinCompile> {
@@ -70,6 +76,8 @@ tasks.withType<Test> {
         showStandardStreams=true
     }
 }
+
+
 allOpen {
     annotation("jakarta.persistence.Entity")
     annotation("jakarta.persistence.MappedSuperclass")
@@ -88,5 +96,30 @@ idea{
         val kaptMain = file("build/generated/source/kapt/main")
         sourceDirs.add(kaptMain)
         generatedSourceDirs.add(kaptMain)
+    }
+}
+dependencies{
+    asciidoctorExt("org.springframework.restdocs:spring-restdocs-asciidoctor")
+}
+tasks {
+
+
+    test {
+        outputs.dir(snippetsDir)
+    }
+
+    asciidoctor {
+        inputs.dir(snippetsDir)
+        dependsOn(test)
+        doLast {
+            copy {
+                from("build/docs/asciidoc")
+                into("src/main/resources/static/docs")
+            }
+        }
+    }
+
+    build {
+        dependsOn(asciidoctor)
     }
 }

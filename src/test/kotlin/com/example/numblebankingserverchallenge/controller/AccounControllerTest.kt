@@ -71,7 +71,7 @@ fun checkBalance( @PathVariable("accountId") accountId: UUID, @SessionLoginCheck
             jsonPath("$.name") { value(account.name) }
             jsonPath("$.balance") { value(account.balance.balance.toInt()) }
         }
-        verify {accountService.findAccountById(account.id) gi  }
+        verify {accountService.findAccountById(account.id)   }
     }
 
     @Test
