@@ -22,7 +22,6 @@ class AccountRepositoryImpl(private val jpaQueryFactory: JPAQueryFactory) : Acco
             .fetch()
 
     override fun findByIdWithLock(accountId: UUID): Account? {
-
         return jpaQueryFactory.selectFrom(account).where(account.id.eq(accountId)).setLockMode(LockModeType.PESSIMISTIC_WRITE)
             .fetchOne()
     }

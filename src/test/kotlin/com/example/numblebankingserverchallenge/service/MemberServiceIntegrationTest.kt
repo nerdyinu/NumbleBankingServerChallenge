@@ -81,6 +81,7 @@ class MemberServiceIntegrationTest @Autowired constructor(
         val loginRequest = LoginRequest(username, "23456")
 //        val failedLoginUser = memberService.login(loginRequest)
 //        assertThat(failedLoginUser).isNull()
+        hashSetOf<Int>()
     }
 
     @Test

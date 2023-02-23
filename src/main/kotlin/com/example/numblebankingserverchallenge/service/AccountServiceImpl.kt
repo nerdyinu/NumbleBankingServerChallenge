@@ -18,7 +18,7 @@ class AccountServiceImpl(
     private val transactionRepository: TransactionRepository,
     private val accountRepository: AccountRepository,
     private val memberRepository: MemberRepository,
-    private val numbleAlarmService: NumbleAlarmService
+    private val numbleAlarmService: NumbleAlarmService,
 ) : AccountService {
     override fun findAccountById(accountId: UUID): AccountDTO? =
         accountRepository.findByIdJoinOwner(accountId)?.let(::AccountDTO) ?: throw CustomException.AccountNotFoundException()
@@ -41,7 +41,7 @@ class AccountServiceImpl(
         val transaction = Transaction(fromAccount, toAccount, amount).let { transactionRepository.save(it) } //shared-lock
         fromAccount.checkAmount(amount) // x-lock : deadlock
         toAccount.addAmount(amount)
-
+        numbleAlarmService.notify(fromAccount.owner.id, "transaction completed.")
         return TransactionDTO(fromAccountId,toAccountId, amount)
     }
 }

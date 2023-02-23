@@ -137,7 +137,7 @@ class AccountRepositoryUnitTest @Autowired constructor(
 
 //            assertThatThrownBy { runBlocking { deferred1.await();deferred2.await(); } }
             awaitAll(deferred1,deferred2)
-            assertThat(account.balance).isEqualTo(2000L)
+            assertThat(account.balance.balance).isEqualTo(2000L)
         }
     }
 
@@ -166,7 +166,7 @@ class AccountRepositoryUnitTest @Autowired constructor(
                 }
             }
            awaitAll(deferred1,deferred2)
-            assertThat(em.find(Account::class.java, account.id).balance).isEqualTo(6000L)
+            assertThat(em.find(Account::class.java, account.id).balance.balance).isEqualTo(6000L)
         }
 
     }

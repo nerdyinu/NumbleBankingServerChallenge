@@ -103,8 +103,8 @@ class AccountServiceTest @Autowired constructor(
         val res1=accountRepository.findById(ac1.id).orElse(null)
         val res2=accountRepository.findById(friendac.id).orElse(null)
         assertThat(res1).isNotNull; assertThat(res2).isNotNull
-        assertThat(res1.balance).isEqualTo(0L)
-        assertThat(res2.balance).isEqualTo(6000)
+        assertThat(res1.balance.balance).isEqualTo(0L)
+        assertThat(res2.balance.balance).isEqualTo(6000)
         assertThat(res).extracting("fromAccountId").containsOnly(ac1.id)
         assertThat(res).extracting("toAccountId").containsOnly(friendac.id)
         assertThat(res).extracting("amount").containsExactly(1000L,2000L)
