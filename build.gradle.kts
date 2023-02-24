@@ -5,22 +5,20 @@ plugins {
     val kotlinVersion = "1.7.22"
     id("org.springframework.boot") version "3.0.2"
     id("io.spring.dependency-management") version "1.1.0"
+    id("org.asciidoctor.jvm.convert") version "3.3.2"
     kotlin("jvm") version kotlinVersion
     kotlin("plugin.spring") version kotlinVersion
     kotlin("plugin.jpa") version kotlinVersion
     kotlin("kapt") version kotlinVersion
-    id("org.asciidoctor.jvm.convert") version "4.0.0-alpha.1"
+
     idea
 }
-val snippetsDir by extra { file("build/generated-snippets") }
+val     snippetsDir by extra { file("build/generated-snippets") }
 
 group = "com.example"
 version = "0.0.1-SNAPSHOT"
 java.sourceCompatibility = JavaVersion.VERSION_17
 
-repositories {
-    mavenCentral()
-}
 
 val testContainerVersion = "1.17.6"
 dependencyManagement {
@@ -28,7 +26,7 @@ dependencyManagement {
         mavenBom("org.testcontainers:testcontainers-bom:$testContainerVersion")
     }
 }
-val asciidoctorExt:Configuration by configurations.creating
+val asciidoctorExt by configurations.creating
 dependencies {
 
     implementation("com.github.f4b6a3:ulid-creator:5.1.0")
@@ -59,9 +57,12 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-test"){exclude(module="mockito-core")}
     testImplementation("org.springframework.security:spring-security-test")
 
-    testImplementation("org.springframework.restdocs:spring-restdocs-mockmvc")
-    testImplementation("org.springframework.restdocs:spring-restdocs-core")
+
+    testImplementation("org.springframework.restdocs:spring-restdocs-mockmvc:3.0.0")
+
+//    testImplementation("org.springframework.restdocs:spring-restdocs-core")
     asciidoctorExt("org.springframework.restdocs:spring-restdocs-asciidoctor:3.0.0")
+
 }
 
 tasks.withType<KotlinCompile> {
@@ -104,34 +105,28 @@ tasks.test{
     outputs.dir(snippetsDir)
 
 }
-tasks.register("asciidoctorCustom", AsciidoctorTask::class){
+tasks.asciidoctor{
     inputs.dir(snippetsDir)
     dependsOn(tasks.test)
-    doFirst { // 2
-        println("=== start asciidoctor===")
-        delete {
-            file("src/main/resources/static/docs")
-        }
-    }
-    options(mapOf("doctype" to "book"))
-    attributes(mapOf("source-highlighter" to "coderay"))
     configurations(asciidoctorExt.name)
-    outputs.dir("build/asciidoc/html5")
+    sources{include("**/index.adoc")}
     baseDirFollowsSourceFile()
 }
 
 tasks.register<Copy>("copyDocument"){
-    from("${tasks.asciidoctor.get().outputDir}") {
-        into("static/docs")
-    }
-    dependsOn("asciidoctorCustom")
+    from("build/docs/asciidoc")
+    into("src/main/resources/static/docs")
+    dependsOn(tasks.asciidoctor)
 }
 tasks.build{
-    dependsOn("asciidoctor")
+    dependsOn("copyDocument")
 }
 tasks.bootJar{
     dependsOn("copyDocument")
-    from("${tasks.asciidoctor.get().outputDir}/html5") {
+    from("${tasks.asciidoctor.get().outputDir}") {
         into("BOOT-INF/classes/static/docs")
     }
+}
+repositories {
+    mavenCentral()
 }

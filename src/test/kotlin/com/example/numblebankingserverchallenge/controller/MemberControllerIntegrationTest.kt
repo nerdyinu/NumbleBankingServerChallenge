@@ -119,7 +119,6 @@ class MemberControllerIntegrationTest @Autowired constructor(
 //        val friend = Member("friend1", passwordEncoder.encode("23456value"))
         val friendship = Friendship(member, friend)
         val randomId = UUID.randomUUID()
-
         mockMvc.post("/users/friends/${randomId}") {
             contentType = MediaType.APPLICATION_JSON
             accept = MediaType.APPLICATION_JSON

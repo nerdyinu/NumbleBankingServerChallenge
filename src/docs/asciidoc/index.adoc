@@ -1,0 +1,15 @@
+:doctype: book
+ifndef::snippets[]
+:snippets: ../../../build/generated-snippets
+endif::[]
+
+:toc: left
+:toclevels: 2
+:sectlinks:
+= NumbleBankingChallenge Account API
+
+== 친구 추가 요청 - 자기 자신일 경우 400 Bad Request
+include::self-request.adoc[]
+
+== 친구 추가 요청 - 존재하지 않는 친구일 경우 404 Not Found
+include::
