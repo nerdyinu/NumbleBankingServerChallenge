@@ -1,0 +1,3 @@
+
+
+operation::member-controller-docs-test/회원가입[snippets="curl-request,http-request,request-body,response-body,http-response"]

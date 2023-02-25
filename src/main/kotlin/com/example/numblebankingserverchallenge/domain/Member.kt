@@ -1,13 +1,7 @@
 package com.example.numblebankingserverchallenge.domain
 
 import com.fasterxml.jackson.annotation.JsonManagedReference
-import jakarta.persistence.CascadeType
-import jakarta.persistence.Column
-import jakarta.persistence.Entity
-import jakarta.persistence.FetchType
-import jakarta.persistence.Index
-import jakarta.persistence.OneToMany
-import jakarta.persistence.Table
+import jakarta.persistence.*
 import org.hibernate.annotations.BatchSize
 
 @Entity
@@ -29,8 +23,9 @@ class Member(username:String, encryptedPassword:String):PrimaryKeyEntity() {
     @OneToMany( mappedBy = "owner", cascade = [CascadeType.ALL])
     @BatchSize(size = 100)
     private val _accounts:MutableList<Account> = mutableListOf()
-    val accounts get()=_accounts.toList()
+    val accounts:List<Account> get()=_accounts.toList()
 
     fun addFreind(friend: Friendship){ _friends.add(friend)}
+    fun addAccount(account:Account){_accounts.add(account)}
     override fun toString(): String  = """Member(username= $username, encryptedPassword= $encryptedPassword)"""
 }

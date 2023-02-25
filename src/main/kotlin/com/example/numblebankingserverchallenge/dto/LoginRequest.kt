@@ -1,5 +1,5 @@
 package com.example.numblebankingserverchallenge.dto
 
-import com.fasterxml.jackson.annotation.JsonProperty
+import java.io.Serializable
 
-data class LoginRequest (@JsonProperty("username")val username:String,@JsonProperty("pw") val pw:String?=null)
+data class LoginRequest (val username:String,val pw:String?=null):Serializable

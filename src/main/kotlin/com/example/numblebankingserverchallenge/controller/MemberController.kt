@@ -1,17 +1,13 @@
 package com.example.numblebankingserverchallenge.controller
 
-import com.example.numblebankingserverchallenge.dto.FriendDTO
-import com.example.numblebankingserverchallenge.dto.SignUpRequest
-import com.example.numblebankingserverchallenge.dto.MemberDTO
 import com.example.numblebankingserverchallenge.config.SessionLoginChecker
+import com.example.numblebankingserverchallenge.dto.FriendDTO
+import com.example.numblebankingserverchallenge.dto.MemberDTO
+import com.example.numblebankingserverchallenge.dto.SignUpRequest
 import com.example.numblebankingserverchallenge.service.MemberService
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RestController
-import java.util.UUID
+import org.springframework.web.bind.annotation.*
+import java.util.*
 
 @RestController
 class MemberController (private val memberService: MemberService){

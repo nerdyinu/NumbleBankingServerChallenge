@@ -1,0 +1,26 @@
+:doctype: book
+ifndef::snippets[]
+:snippets: ./build/generated-snippets
+endif::[]
+
+:toc: left
+:toclevels: 1
+:sectlinks:
+= NumbleBankingChallenge Account API
+
+== 친구 추가 요청 [POST] /users/friends/\{friendsId\}
+
+
+== 회원가입
+include::signup.adoc[]
+
+== 로그인
+include::login.adoc[]
+
+== 친구 추가 요청
+include::friend-request.adoc[]
+
+
+
+
+

@@ -1,23 +1,21 @@
 package com.example.numblebankingserverchallenge.domain
 
-import com.example.numblebankingserverchallenge.dto.AccountBalance
 import jakarta.persistence.*
 
 @Entity
-@Table(name="transaction")
-class Transaction(fromAccount:Account,toAccount:Account,checkAmount:Long) :PrimaryKeyEntity(){
-
-
-
-    @Column(nullable=false)
-    val amount:Long = checkAmount
-
+@Table(name = "transaction")
+class Transaction(
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name="from_account_id")
-    val fromAccount:Account = fromAccount
-
+    @JoinColumn(name = "from_account_id")
+    val fromAccount: Account,
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name="to_account_id")
-    val toAccount:Account = toAccount
+    @JoinColumn(name = "to_account_id")
+    val toAccount: Account,
+    @Column(nullable = false)
+    val amount: Long
+) : PrimaryKeyEntity() {
+    init {
+        this.fromAccount.addTransaction(this)
+    }
 
 }

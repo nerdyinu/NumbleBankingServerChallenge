@@ -1,14 +1,11 @@
 package com.example.numblebankingserverchallenge.repository.transaction
 
-import com.example.numblebankingserverchallenge.domain.Account
 import com.example.numblebankingserverchallenge.domain.QAccount
-import com.example.numblebankingserverchallenge.domain.QAccount.*
+import com.example.numblebankingserverchallenge.domain.QAccount.account
 import com.example.numblebankingserverchallenge.domain.QMember
-import com.example.numblebankingserverchallenge.domain.QTransaction
-import com.example.numblebankingserverchallenge.domain.QTransaction.*
+import com.example.numblebankingserverchallenge.domain.QTransaction.transaction
 import com.example.numblebankingserverchallenge.domain.Transaction
 import com.querydsl.jpa.impl.JPAQueryFactory
-import jakarta.persistence.LockModeType
 import java.util.*
 
 class TransactionRepositoryImpl(private val jpaQueryFactory: JPAQueryFactory):TransactionRepositoryCustom {

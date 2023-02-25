@@ -3,11 +3,9 @@ package com.example.numblebankingserverchallenge.controller
 import com.example.numblebankingserverchallenge.domain.Account
 import com.example.numblebankingserverchallenge.domain.Member
 import com.example.numblebankingserverchallenge.dto.*
-import com.example.numblebankingserverchallenge.config.SessionLoginChecker
 import com.example.numblebankingserverchallenge.service.AccountService
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.ninjasquad.springmockk.MockkBean
-import io.mockk.core.ValueClassSupport.boxedValue
 import io.mockk.every
 import io.mockk.junit5.MockKExtension
 import io.mockk.verify
@@ -17,37 +15,25 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
-import org.springframework.http.ResponseEntity
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.post
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import java.util.*
+import com.example.numblebankingserverchallenge.util.*
 
 @ExtendWith(SpringExtension::class, MockKExtension::class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @AutoConfigureMockMvc
-class AccounControllerTest @Autowired constructor(
+class AccounControllerUnitTest @Autowired constructor(
     private val mockMvc: MockMvc,
     private val passwordEncoder: PasswordEncoder,
     @MockkBean val accountService:AccountService
 ) {
 
-    val member = Member("inu", "encrypted")
-    val friend = Member("friend", "encrypted2")
-    val returnMember = MemberDTO(member)
-    val account = Account(member, "account1", AccountBalance(3000L))
-    val friendAccount = Account(friend, "ac2", AccountBalance(3000L))
 
-    val returnAccount = AccountDTO(account)
-    val mySession = mapOf("user" to returnMember)
-    val mapper = jacksonObjectMapper()
     @BeforeEach
     fun setup(){
 
@@ -59,7 +45,7 @@ fun checkBalance( @PathVariable("accountId") accountId: UUID, @SessionLoginCheck
     @Test
     @WithMockUser
     fun `checkBalance should return account balance`() {
-        every { accountService.findAccountById(account.id) } returns returnAccount
+        every { accountService.findAccountByOwnerAndId(member.id,account.id) } returns returnAccount
         mockMvc.get("/accounts/${account.id}") {
             accept = MediaType.APPLICATION_JSON
             sessionAttrs = mySession
@@ -71,19 +57,19 @@ fun checkBalance( @PathVariable("accountId") accountId: UUID, @SessionLoginCheck
             jsonPath("$.name") { value(account.name) }
             jsonPath("$.balance") { value(account.balance.balance.toInt()) }
         }
-        verify {accountService.findAccountById(account.id)   }
+        verify {accountService.findAccountByOwnerAndId(member.id,account.id)   }
     }
 
     @Test
     @WithMockUser
     fun `checkBalance - when session doesnt exist return 401 UnAuthorized`(){
-        every { accountService.findAccountById(account.id) } returns returnAccount
+        every { accountService.findAccountByOwnerAndId(member.id,account.id) } returns returnAccount
         mockMvc.get("/accounts/${account.id}"){
             accept= MediaType.APPLICATION_JSON
         }.andExpect {
             status { isUnauthorized()}
         }
-        verify (exactly = 0){  accountService.findAccountById(account.id) }
+        verify (exactly = 0){  accountService.findAccountByOwnerAndId(member.id,account.id) }
     }
     /*
 *     @PostMapping("/account")

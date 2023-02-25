@@ -1,9 +1,7 @@
 package com.example.numblebankingserverchallenge.repository.transaction
 
-import com.example.numblebankingserverchallenge.domain.Account
 import com.example.numblebankingserverchallenge.domain.Transaction
-import org.springframework.transaction.annotation.Transactional
-import java.util.UUID
+import java.util.*
 
 interface TransactionRepositoryCustom {
     // generate transaction

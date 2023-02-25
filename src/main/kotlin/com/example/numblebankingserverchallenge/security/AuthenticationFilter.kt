@@ -2,24 +2,16 @@ package com.example.numblebankingserverchallenge.security
 
 import com.example.numblebankingserverchallenge.dto.LoginRequest
 import com.example.numblebankingserverchallenge.exception.CustomException
-
 import com.example.numblebankingserverchallenge.service.MemberService
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
-import io.jsonwebtoken.Jwts
-import io.jsonwebtoken.SignatureAlgorithm
-import io.jsonwebtoken.io.Decoders
-import io.jsonwebtoken.security.Keys
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
-import org.springframework.core.env.Environment
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.userdetails.User
-import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
-import java.util.*
 
 
 class AuthenticationFilter (val memberService: MemberService): UsernamePasswordAuthenticationFilter() {
@@ -29,7 +21,7 @@ class AuthenticationFilter (val memberService: MemberService): UsernamePasswordA
         try {
             val creds = mapper.readValue(request?.inputStream, LoginRequest::class.java)
             token = UsernamePasswordAuthenticationToken(creds.username, creds.pw, arrayListOf())
-
+            logger.info("attempt authentication called!!")
         } catch (e: Exception) {
 
             throw RuntimeException(e)
@@ -44,21 +36,10 @@ class AuthenticationFilter (val memberService: MemberService): UsernamePasswordA
         authResult: Authentication?
     ) {
 
-        val user =(authResult?.principal as? User) ?: throw RuntimeException("")
+        val user =(authResult?.principal as? User) ?: throw CustomException.BadRequestException()
         val userDetails =  memberService.findByUsername(user.username) ?: throw CustomException.UserNotFoundException()
 
         request?.session?.setAttribute("user", userDetails)
 
-
-        //        val key = env.getProperty("token.secret").let{
-//            Decoders.BASE64.decode(it).let{ bytes -> Keys.hmacShaKeyFor(bytes)}
-//        }
-//        val token=Jwts.builder()
-//            .setSubject(userDetails.id.toString())
-//            .setExpiration(Date(System.currentTimeMillis()+env.getProperty("token.expiration_time")!!.toLong()))
-//            .signWith( key,SignatureAlgorithm.HS512)
-//            .compact()
-//        response?.addHeader("token",token)
-//        response?.addHeader(    "userId",userDetails.id.toString())
     }
 }

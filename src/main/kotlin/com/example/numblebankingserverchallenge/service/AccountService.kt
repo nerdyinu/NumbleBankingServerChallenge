@@ -1,12 +1,13 @@
 package com.example.numblebankingserverchallenge.service
 
-import com.example.numblebankingserverchallenge.domain.Account
-import com.example.numblebankingserverchallenge.domain.Transaction
-import com.example.numblebankingserverchallenge.dto.*
+import com.example.numblebankingserverchallenge.dto.AccountCreateRequest
+import com.example.numblebankingserverchallenge.dto.AccountDTO
+import com.example.numblebankingserverchallenge.dto.TransactionDTO
+import com.example.numblebankingserverchallenge.dto.TransactionRequest
 import java.util.*
 
 interface AccountService {
-    fun findAccountById(accountId: UUID):AccountDTO?
+    fun findAccountByOwnerAndId(ownerId: UUID,accountId: UUID):AccountDTO?
     fun findAllByOwnerId(ownerId:UUID):List<AccountDTO>
     fun createAccount(ownerId: UUID, accountCreateRequest: AccountCreateRequest):AccountDTO
     fun createTransaction(transactionRequest: TransactionRequest): TransactionDTO

@@ -4,14 +4,14 @@ spring:
     activate:
       on-profile: test
   datasource:
-    url: jdbc:h2:mem:testdb;LOCK_TIMEOUT=3000
+    url: jdbc:h2:mem:testdb;
     username: sa
     password:
 
   jpa:
     defer-datasource-initialization: true
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: create
     properties:
       format_sql: true
       show_sql: true

@@ -13,7 +13,7 @@ plugins {
 
     idea
 }
-val     snippetsDir by extra { file("build/generated-snippets") }
+val snippetsDir by extra { file("build/generated-snippets") }
 
 group = "com.example"
 version = "0.0.1-SNAPSHOT"
@@ -109,7 +109,7 @@ tasks.asciidoctor{
     inputs.dir(snippetsDir)
     dependsOn(tasks.test)
     configurations(asciidoctorExt.name)
-    sources{include("**/index.adoc")}
+    sources{include("**/memberController.adoc", "**/accountController.adoc")}
     baseDirFollowsSourceFile()
 }
 
@@ -126,6 +126,7 @@ tasks.bootJar{
     from("${tasks.asciidoctor.get().outputDir}") {
         into("BOOT-INF/classes/static/docs")
     }
+    duplicatesStrategy  = DuplicatesStrategy.EXCLUDE
 }
 repositories {
     mavenCentral()

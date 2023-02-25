@@ -1,7 +1,6 @@
 package com.example.numblebankingserverchallenge.controller
 
-import com.example.numblebankingserverchallenge.JpaTestConfig
-import com.example.numblebankingserverchallenge.WebMvcTestConfig
+
 import com.example.numblebankingserverchallenge.domain.Friendship
 import com.example.numblebankingserverchallenge.domain.Member
 import com.example.numblebankingserverchallenge.dto.FriendDTO
@@ -10,33 +9,17 @@ import com.example.numblebankingserverchallenge.dto.MemberDTO
 import com.example.numblebankingserverchallenge.dto.SignUpRequest
 import com.example.numblebankingserverchallenge.repository.member.MemberRepository
 import com.example.numblebankingserverchallenge.service.MemberService
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
 import io.mockk.junit5.MockKExtension
-import io.mockk.verify
-import org.assertj.core.api.Assertions.*
-import org.junit.jupiter.api.BeforeEach
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.context.annotation.Import
-import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext
 import org.springframework.http.MediaType
-import org.springframework.restdocs.RestDocumentationContextProvider
-import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation
-import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.*
-import org.springframework.restdocs.mockmvc.RestDocumentationResultHandler
-import org.springframework.restdocs.operation.preprocess.OperationPreprocessor
-import org.springframework.restdocs.operation.preprocess.Preprocessors.*
-import org.springframework.restdocs.payload.PayloadDocumentation
-import org.springframework.restdocs.payload.PayloadDocumentation.*
-import org.springframework.restdocs.request.RequestDocumentation
-import org.springframework.restdocs.request.RequestDocumentation.*
 import org.springframework.security.core.userdetails.User
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.test.context.support.WithAnonymousUser
@@ -45,9 +28,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.post
-import org.springframework.test.web.servlet.setup.DefaultMockMvcBuilder
-import org.springframework.test.web.servlet.setup.MockMvcBuilders
-import org.springframework.web.context.WebApplicationContext
+import com.example.numblebankingserverchallenge.util.*
 
 @ExtendWith(SpringExtension::class, MockKExtension::class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
@@ -59,13 +40,7 @@ class MemberControllerUnitTest @Autowired constructor(
     @MockkBean val memberRepository: MemberRepository
 ) {
 
-    val signUpRequest = SignUpRequest("inu", "12345value")
-    val member = Member(signUpRequest.username, passwordEncoder.encode(signUpRequest.pw))
-    val returnMember: MemberDTO = MemberDTO(member)
-    val loginRequest = LoginRequest(signUpRequest.username, signUpRequest.pw)
-    val mapper = jacksonObjectMapper()
-    val userdetails = User(member.username, member.encryptedPassword, arrayListOf())
-    val mySession = mapOf("user" to returnMember)
+
     @Autowired
     lateinit var mockMvc: MockMvc
 
@@ -100,7 +75,7 @@ class MemberControllerUnitTest @Autowired constructor(
         val result = mockMvc.post("/login") {
             contentType = MediaType.APPLICATION_JSON
             content = mapper.writeValueAsString(loginRequest)
-        }.andReturn()
+        }.andExpect { status { isOk() } }.andReturn()
 
         val session = result.request.session
         val user = session?.getAttribute("user") as? MemberDTO

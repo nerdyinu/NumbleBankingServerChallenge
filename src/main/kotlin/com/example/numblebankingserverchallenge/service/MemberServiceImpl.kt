@@ -3,22 +3,19 @@ package com.example.numblebankingserverchallenge.service
 import com.example.numblebankingserverchallenge.domain.Friendship
 import com.example.numblebankingserverchallenge.domain.Member
 import com.example.numblebankingserverchallenge.dto.FriendDTO
-
-import com.example.numblebankingserverchallenge.dto.LoginRequest
-import com.example.numblebankingserverchallenge.dto.SignUpRequest
-
 import com.example.numblebankingserverchallenge.dto.MemberDTO
+import com.example.numblebankingserverchallenge.dto.SignUpRequest
 import com.example.numblebankingserverchallenge.exception.CustomException
-
 import com.example.numblebankingserverchallenge.repository.friendship.FriendshipRepository
 import com.example.numblebankingserverchallenge.repository.member.MemberRepository
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.core.userdetails.User
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.util.UUID
+import java.util.*
 
 @Service
 class MemberServiceImpl (
@@ -28,11 +25,13 @@ class MemberServiceImpl (
 ) : MemberService {
     @Autowired
     lateinit var memberRepository:MemberRepository
+    val logger = LoggerFactory.getLogger(this::class.java)
     override fun findByUsername(username: String): MemberDTO? =
         memberRepository.findByUsername(username)?.let(::MemberDTO)
 
-    override fun loadUserByUsername(username: String?): UserDetails {
-        val member = username?.let{memberRepository.findByUsername(it)} ?: throw CustomException.UserNotFoundException()
+    override fun loadUserByUsername(username: String): UserDetails {
+        logger.info("loadUserByUsername called!!")
+        val member = username.let{memberRepository.findByUsername(it) ?: throw CustomException.UserNotFoundException() }
         return User(member.username, member.encryptedPassword, mutableListOf())
     }
 
@@ -55,10 +54,10 @@ class MemberServiceImpl (
         val findFriend = memberRepository.findById(friendId).orElse(null) ?: throw CustomException.UserNotFoundException()
         if(userId==friendId) throw CustomException.BadRequestException()
         val friendShip = Friendship(findMember, findFriend)
-        findMember.addFreind(friendShip)
         val friendShip2 = Friendship(findFriend, findMember)
-        findFriend.addFreind(friendShip2)
-        friendshipRepository.saveAll(listOf(friendShip2, friendShip)) // s-lock
-        return FriendDTO(friendShip.id, findMember.username, findFriend.username)
+        val (f1,f2)=friendshipRepository.saveAll(listOf(friendShip, friendShip2)) // s-lock
+        findMember.addFreind(f1)
+        findFriend.addFreind(f2)
+        return FriendDTO(f1)
     }
 }

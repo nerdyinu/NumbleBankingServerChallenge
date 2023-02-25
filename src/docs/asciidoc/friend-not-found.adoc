@@ -1,4 +1,0 @@
-
-
-== [POST] /users/friends/\{friendsId\}
-operation::member-controller-integration-test/존재하지 않는 친구id인 경우 404[snippets="curl-request,httpie-request,http-request,response-body,http-response"]
