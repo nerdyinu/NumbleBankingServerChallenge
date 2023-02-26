@@ -10,6 +10,6 @@ import java.util.*
 interface MemberService:UserDetailsService {
     fun createUser(signUpRequest: SignUpRequest):MemberDTO
     fun findByUsername(username:String):MemberDTO?
-    fun getFriends(id:UUID):List<MemberDTO>
+    fun getFriends(id:UUID):List<FriendDTO>
     fun addFriend(userId:UUID,friendId:UUID):FriendDTO
 }

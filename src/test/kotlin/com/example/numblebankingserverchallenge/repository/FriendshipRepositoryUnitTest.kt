@@ -13,9 +13,11 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager
 import org.springframework.context.annotation.Import
+import org.springframework.transaction.annotation.Transactional
 
 @DataJpaTest
 @Import(JpaTestConfig::class)
+@Transactional
 class FriendshipRepositoryUnitTest @Autowired constructor(
     private val entityManager: TestEntityManager,
     private val memberRepository: MemberRepository,
@@ -34,15 +36,14 @@ class FriendshipRepositoryUnitTest @Autowired constructor(
         entityManager.persist(friend2)
         val friendship = Friendship(member, friend)
         val friendship2 = Friendship(member, friend2)
-        member.addFreind(friendship)
-        member.addFreind(friendship2)
+
         entityManager.persist(friendship)
         entityManager.persist(friendship2)
         entityManager.flush()
 
         val res = friendshipRepository.getFriends(member.id)
-        assertThat(res[0].id).isEqualTo(friend.id)
-        assertThat(res[1].id).isEqualTo(friend2.id)
+        assertThat(res).extracting("friend").extracting("id").containsOnly(friend.id, friend2.id)
+        assertThat(res).extracting("friend").extracting("username").containsOnly(friend.username, friend2.username)
 
     }
 

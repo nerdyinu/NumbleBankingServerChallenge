@@ -30,7 +30,7 @@ import org.springframework.transaction.annotation.Transactional
 @Transactional
 
 @ExtendWith(SpringExtension::class)
-class AccountServiceTest @Autowired constructor(
+class AccountServiceIntegrationTest @Autowired constructor(
     private val memberRepository: MemberRepository,
     private val accountService: AccountService,
     private val accountRepository: AccountRepository,
@@ -42,16 +42,10 @@ class AccountServiceTest @Autowired constructor(
     lateinit var friendac:Account
     val member = Member(signUpRequest.username, passwordEncoder.encode(signUpRequest.pw))
     val friend = Member(friendSignup.username, passwordEncoder.encode(friendSignup.pw))
-    val returnMember: MemberDTO = MemberDTO(member)
-    val loginRequest = LoginRequest(signUpRequest.username, signUpRequest.pw)
-    val mapper = jacksonObjectMapper()
-    val session = MockHttpSession()
-    val mySession = mapOf("user" to returnMember)
+
     val account = Account(member, "account1", AccountBalance(3000L))
     val friendAccount = Account(friend, "ac2", AccountBalance(3000L))
-    val userdetails = User(member.username, member.encryptedPassword, arrayListOf())
-    fun myIdentifier(methodName: String) = "{class-name}/$methodName"
-    val returnAccount = AccountDTO(account)
+
     @BeforeEach
     fun init() {
         owner = memberRepository.save(member)

@@ -6,7 +6,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 
 @TestConfiguration
-//@Import(WebSecurityConfig::class, WebMvcConfig::class)
 class WebMvcTestConfig {
     @Bean
     fun passwordEncoder():PasswordEncoder = BCryptPasswordEncoder()

@@ -101,7 +101,8 @@ class MemberControllerUnitTest @Autowired constructor(
     @WithMockUser
     fun `getFriends- 인증되었다면 친구목록을 조회한다`() {
         val friend = Member("friend1", "23456value")
-        every { memberService.getFriends(returnMember.id) } returns listOf(MemberDTO(friend))
+        val friendship = Friendship(member,friend)
+        every { memberService.getFriends(returnMember.id) } returns listOf(FriendDTO(friendship))
         mockMvc.get("/users/friends") {
             contentType = MediaType.APPLICATION_JSON
             accept = MediaType.APPLICATION_JSON
@@ -109,7 +110,7 @@ class MemberControllerUnitTest @Autowired constructor(
         }.andExpect {
             status { isOk() }
             content { contentType(MediaType.APPLICATION_JSON) }
-            content { json(mapper.writeValueAsString(listOf(MemberDTO(friend)))) }
+            content { json(mapper.writeValueAsString(listOf(FriendDTO(friendship)))) }
         }
     }
 
@@ -117,7 +118,8 @@ class MemberControllerUnitTest @Autowired constructor(
     @WithMockUser
     fun `친구목록 조회- 세션이 없는 경우 401에러`() {
         val friend = Member("friend1", "23456value")
-        every { memberService.getFriends(member.id) } returns listOf(MemberDTO(friend))
+        val friendship =Friendship(member,friend)
+        every { memberService.getFriends(member.id) } returns listOf(FriendDTO(friendship))
         mockMvc.get("/users/friends") {
             contentType = MediaType.APPLICATION_JSON
             accept = MediaType.APPLICATION_JSON

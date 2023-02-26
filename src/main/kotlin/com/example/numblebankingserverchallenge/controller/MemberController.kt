@@ -17,7 +17,7 @@ class MemberController (private val memberService: MemberService){
     }
 
     @GetMapping("/users/friends")
-    fun friendsList(@SessionLoginChecker member:MemberDTO):ResponseEntity<List<MemberDTO>>{
+    fun friendsList(@SessionLoginChecker member:MemberDTO):ResponseEntity<List<FriendDTO>>{
         return memberService.getFriends(member.id).let { ResponseEntity.ok().body(it) }
     }
 

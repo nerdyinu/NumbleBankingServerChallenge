@@ -6,6 +6,6 @@ import com.example.numblebankingserverchallenge.dto.FriendDTO
 import java.util.*
 
 interface FriendshipRepositoryCustom {
-    fun getFriends(id: UUID):List<Member>
+    fun getFriends(id: UUID):List<Friendship>
     fun findFriend(memberId:UUID,friendID:UUID):Friendship?
 }

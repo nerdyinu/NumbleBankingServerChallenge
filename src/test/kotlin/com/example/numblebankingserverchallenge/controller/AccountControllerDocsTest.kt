@@ -8,8 +8,6 @@ import com.example.numblebankingserverchallenge.dto.*
 import com.example.numblebankingserverchallenge.repository.account.AccountRepository
 import com.example.numblebankingserverchallenge.repository.friendship.FriendshipRepository
 import com.example.numblebankingserverchallenge.repository.member.MemberRepository
-import com.example.numblebankingserverchallenge.service.AccountService
-import com.example.numblebankingserverchallenge.util.*
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
@@ -46,20 +44,21 @@ import java.util.*
 @Transactional
 class AccountControllerDocsTest @Autowired constructor(
     private val passwordEncoder: PasswordEncoder,
-    private val accountService: AccountService,
     private val memberRepository: MemberRepository,
     private val accountRepository: AccountRepository,
     private val friendshipRepository: FriendshipRepository,
 
     ) {
-    @Autowired
+        @Autowired
     lateinit var mockMvc: MockMvc
     lateinit var owner: Member
     lateinit var account1: Account
     lateinit var friend1: Member
     lateinit var friendac: Account
-    val member = Member(signUpRequest.username, com.example.numblebankingserverchallenge.util.passwordEncoder.encode(signUpRequest.pw))
-    val friend = Member(friendSignup.username, com.example.numblebankingserverchallenge.util.passwordEncoder.encode(friendSignup.pw))
+    val signUpRequest = SignUpRequest("inu", "12345value")
+    val friendSignup = SignUpRequest("friend1", "23456value")
+    val member = Member(signUpRequest.username, passwordEncoder.encode(signUpRequest.pw))
+    val friend = Member(friendSignup.username, passwordEncoder.encode(friendSignup.pw))
     val returnMember: MemberDTO = MemberDTO(member)
     val mapper = jacksonObjectMapper()
     val mySession = mapOf("user" to returnMember)
@@ -68,8 +67,10 @@ class AccountControllerDocsTest @Autowired constructor(
 
     fun myIdentifier(methodName: String) = "{class-name}/$methodName"
     val returnAccount = AccountDTO(account)
+
     @BeforeEach
     fun init() {
+
         owner = memberRepository.save(member)
         friend1 = memberRepository.save(friend)
         account1 = accountRepository.save(account)
@@ -181,6 +182,7 @@ class AccountControllerDocsTest @Autowired constructor(
             handle(
                 document(
                     myIdentifier("계좌목록 조회"),
+
                     responseFields(
                         fieldWithPath("[].ownerId").type(STRING).description("계좌 주인 id"),
                         fieldWithPath("[].accountId").type(STRING).description("계좌 id"),
@@ -265,7 +267,7 @@ class AccountControllerDocsTest @Autowired constructor(
     @Test
     @WithMockUser
     fun `계좌 이체 성공`() {
-        val friendship =friendshipRepository.save(Friendship(owner, friend1))
+        val friendship = friendshipRepository.save(Friendship(owner, friend1))
         val request = TransactionRequest(account1.id, friendac.id, 3000L)
         val res = mockMvc.perform(
             RestDocumentationRequestBuilders.post("/account/transfer").sessionAttrs(mySession).accept(APPLICATION_JSON)
@@ -299,7 +301,7 @@ class AccountControllerDocsTest @Autowired constructor(
     @WithMockUser
     fun `친구 관계가 아닌경우 400 Bad Request`() {
         val request = TransactionRequest(account1.id, friendac.id, 3000L)
-        mockMvc.post("/account/transfer"){
+        mockMvc.post("/account/transfer") {
             accept = APPLICATION_JSON
             contentType = APPLICATION_JSON
             sessionAttrs = mySession
@@ -313,7 +315,7 @@ class AccountControllerDocsTest @Autowired constructor(
     @WithMockUser
     fun `존재 하지 않는 계좌번호 404 Not Found`() {
         val request = TransactionRequest(account1.id, UUID.randomUUID(), 3000L)
-        mockMvc.post("/account/transfer"){
+        mockMvc.post("/account/transfer") {
             accept = APPLICATION_JSON
             contentType = APPLICATION_JSON
             sessionAttrs = mySession

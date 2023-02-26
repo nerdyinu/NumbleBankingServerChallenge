@@ -1,13 +1,12 @@
 package com.example.numblebankingserverchallenge.controller
 
 import com.example.numblebankingserverchallenge.*
+import com.example.numblebankingserverchallenge.domain.Friendship
 import com.example.numblebankingserverchallenge.domain.Member
-import com.example.numblebankingserverchallenge.dto.LoginRequest
-import com.example.numblebankingserverchallenge.dto.MemberDTO
-import com.example.numblebankingserverchallenge.dto.SignUpRequest
+import com.example.numblebankingserverchallenge.dto.*
+import com.example.numblebankingserverchallenge.repository.friendship.FriendshipRepository
 import com.example.numblebankingserverchallenge.repository.member.MemberRepository
-import com.example.numblebankingserverchallenge.service.MemberService
-import com.example.numblebankingserverchallenge.util.*
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
@@ -30,6 +29,7 @@ import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.servlet.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
+import org.springframework.transaction.annotation.Transactional
 import java.util.*
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
@@ -38,9 +38,9 @@ import java.util.*
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 @ExtendWith(SpringExtension::class, RestDocumentationExtension::class)
+@Transactional
 class MemberControllerDocsTest @Autowired constructor(
-
-    private val memberService: MemberService,
+    private val friendshipRepository: FriendshipRepository,
     private val passwordEncoder: PasswordEncoder,
     private val memberRepository: MemberRepository
 ) {
@@ -50,17 +50,30 @@ class MemberControllerDocsTest @Autowired constructor(
 
     @Autowired
     lateinit var mockMvc: MockMvc
+    lateinit var user:Member
+    lateinit var friend1:Member
+    val signUpRequest = SignUpRequest("inu", "12345value")
+    val friendSignup = SignUpRequest("friend1", "23456value")
+    val member = Member(signUpRequest.username, passwordEncoder.encode(signUpRequest.pw))
+    val friend = Member(friendSignup.username, passwordEncoder.encode(friendSignup.pw))
+    val returnMember: MemberDTO = MemberDTO(member)
+    val loginRequest = LoginRequest(signUpRequest.username, signUpRequest.pw)
+    val mapper = jacksonObjectMapper()
+    val mySession = mapOf("user" to returnMember)
+
+    fun myIdentifier(methodName: String) = "{class-name}/$methodName"
 
     @BeforeEach
     fun setUp() {
 
-        memberRepository.save(member)
-        memberRepository.save(friend)
+        user=memberRepository.save(member)
+        friend1=memberRepository.save(friend)
     }
 
     @AfterEach
     fun deleteAll() {
         memberRepository.deleteAll()
+        friendshipRepository.deleteAll()
     }
 
     @Test
@@ -111,20 +124,17 @@ class MemberControllerDocsTest @Autowired constructor(
         }
     }
 
-    /*  @GetMapping("/login")
-//    fun login(@RequestBody loginRequest: LoginRequest, session: HttpSession): ResponseEntity<MemberDTO> {
-//        val MemberDTO = memberService.login(loginRequest) ?: return ResponseEntity.badRequest().build()
-//        session.setAttribute("user", MemberDTO)
-//        return ResponseEntity.ok().body(MemberDTO)
-//      }
-*/
+    /*
+    * 로그인은 spring security의
+    * UsernamePasswordAuthenticationFilter의 디폴트 엔드포인트를 사용
+    * */
     @Test
     fun `로그인 성공`() {
 
 
         val result = mockMvc.post("/login") {
             contentType = APPLICATION_JSON
-            content = mapper.writeValueAsString(LoginRequest(member.username, signUpRequest.pw))
+            content = mapper.writeValueAsString(LoginRequest(user.username, signUpRequest.pw))
 
         }.andExpect {
             status { isOk() }
@@ -185,7 +195,7 @@ class MemberControllerDocsTest @Autowired constructor(
     @WithMockUser
     fun `자기 자신을 요청한 경우 400`() {
 
-        mockMvc.post("/users/friends/${member.id}") {
+        mockMvc.post("/users/friends/${user.id}") {
             contentType = APPLICATION_JSON
             accept = APPLICATION_JSON
             sessionAttrs = mySession
@@ -200,13 +210,13 @@ class MemberControllerDocsTest @Autowired constructor(
     @WithMockUser
     fun `친구 추가요청 - 정상적으로 요청 - FriendDTO 반환`() {
         val request = mockMvc.perform(
-            RestDocumentationRequestBuilders.post("/users/friends/{friendId}", friend.id).accept(APPLICATION_JSON)
+            RestDocumentationRequestBuilders.post("/users/friends/{friendId}", friend1.id).accept(APPLICATION_JSON)
                 .sessionAttrs(mySession)
         )
         request.andExpect(status().isOk).andExpect(content().contentType(APPLICATION_JSON))
             .andExpect(jsonPath("$.id").isNotEmpty)
-            .andExpect(jsonPath("$.username").value(member.username))
-            .andExpect(jsonPath("$.friendName").value(friend.username))
+            .andExpect(jsonPath("$.username").value(user.username))
+            .andExpect(jsonPath("$.friendName").value(friend1.username))
             .andDo(
                 document(
                     myIdentifier("친구추가"),
@@ -227,13 +237,40 @@ class MemberControllerDocsTest @Autowired constructor(
 
 
     }
-//
 
-//
-//    @GetMapping("/users/{userId}/friends")
-//    fun friendsList(@PathVariable("userId") userId: UUID): ResponseEntity<List<MemberDTO>> {
-//        return memberService.getFriends(userId).let { ResponseEntity.ok().body(it) }
-//    }
-//
+/*
+    @GetMapping("/users/friends")
+    fun friendsList(@SessionLoginChecker member:MemberDTO): ResponseEntity<List<MemberDTO>> {
+        return memberService.getFriends(member.id).let { ResponseEntity.ok().body(it) }
+    }
+*/
+    @Test
+    @WithMockUser
+    fun `친구 목록 조회 성공`(){
+        friendshipRepository.save(Friendship(user, friend1))
+        mockMvc.get("/users/friends"){
+            accept= APPLICATION_JSON
+            sessionAttrs= mySession
+        }.andExpect {
+            status { isOk() }
+            content { contentType(APPLICATION_JSON) }
+            content {
+                jsonPath("$[0].friendName"){value(friend.username)}
+                jsonPath("$[0].username"){value(member.username)}
+                jsonPath("$[0].id"){isNotEmpty(); isString()}
+            }
+        }.andDo {
+            handle(
+                document(
+                    myIdentifier("친구목록 조회"),
+                    responseFields(
+                        fieldWithPath("[].id").type(STRING).description("친구관계 id"),
+                        fieldWithPath("[].username").type(STRING).description("유저 id"),
+                        fieldWithPath("[].friendName").type(STRING).description("추가한 친구 id")
+                    )
+                )
+            )
+        }
+    }
 
 }

@@ -1,4 +1,5 @@
 package com.example.numblebankingserverchallenge.dto
 
-data class SignUpRequest(val username:String, val pw:String) {
-}
+import java.io.Serializable
+
+data class SignUpRequest(val username:String, val pw:String):Serializable

@@ -43,9 +43,9 @@ class MemberServiceImpl (
     }
 
 
-    override fun getFriends(id: UUID): List<MemberDTO> {
+    override fun getFriends(id: UUID): List<FriendDTO> {
         val findMember = memberRepository.findById(id).orElseThrow { CustomException.UserNotFoundException() }
-        return friendshipRepository.getFriends(findMember.id).map(::MemberDTO)
+        return friendshipRepository.getFriends(findMember.id).map(::FriendDTO)
     }
     @Transactional
     override fun addFriend(userId: UUID, friendId: UUID): FriendDTO {

@@ -9,7 +9,7 @@ import java.util.*
 
 class AccountRepositoryImpl(private val jpaQueryFactory: JPAQueryFactory) : AccountRepositoryCustom {
     override fun findByIdJoinOwner(accountId: UUID): Account? =
-        jpaQueryFactory.select(account).from(account).leftJoin(account.owner, member).on(account.owner.id.eq(member.id))
+        jpaQueryFactory.select(account).from(account).join(account.owner, member).on(account.owner.id.eq(member.id))
             .where(account.id.eq(accountId))
             .fetchOne()
 

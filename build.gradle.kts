@@ -109,7 +109,7 @@ tasks.asciidoctor{
     inputs.dir(snippetsDir)
     dependsOn(tasks.test)
     configurations(asciidoctorExt.name)
-    sources{include("**/index.adoc")}
+    sources{include("**/index.adoc") }
     baseDirFollowsSourceFile()
 }
 

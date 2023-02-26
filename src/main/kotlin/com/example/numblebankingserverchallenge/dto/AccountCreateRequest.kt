@@ -1,4 +1,6 @@
 package com.example.numblebankingserverchallenge.dto
 
-data class AccountCreateRequest(val name:String, val amount:AccountBalance) {
+import java.io.Serializable
+
+data class AccountCreateRequest(val name:String, val amount:AccountBalance):Serializable {
 }

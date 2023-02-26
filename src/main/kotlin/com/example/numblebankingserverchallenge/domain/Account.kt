@@ -36,7 +36,6 @@ class Account(
     }
 
     fun addAmount(amount: Long) {
-
         _balance = AccountBalance(_balance.balance + amount)
     }
     fun addTransaction(transaction: Transaction){_transactions.add(transaction)}

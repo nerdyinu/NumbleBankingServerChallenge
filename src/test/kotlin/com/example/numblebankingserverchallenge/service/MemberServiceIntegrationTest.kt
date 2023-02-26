@@ -98,14 +98,16 @@ class MemberServiceIntegrationTest @Autowired constructor(
         //user가 없거나 friend가 없는 경우 null 반환
         //user-> friend, friend->user, 2개 friendship
 
-        val 한방향관계 = memberService.getFriends(saveduser.id)
-        val 양방향관계 = memberService.getFriends(savedFriend.id)
+        val friends = memberService.getFriends(saveduser.id)
+        val opposite = memberService.getFriends(savedFriend.id)
 
         assertThat(friendShipDTO).isNotNull
-        assertThat(한방향관계?.size).isEqualTo(1)
-        assertThat(한방향관계?.get(0)?.username).isEqualTo(savedFriend.username)
-        assertThat(양방향관계?.size).isEqualTo(1)
-        assertThat(양방향관계?.get(0)?.username).isEqualTo(saveduser.username)
+        assertThat(friends.size).isEqualTo(1)
+        assertThat(friends[0].username).isEqualTo(saveduser.username)
+        assertThat(friends[0].friendName).isEqualTo(savedFriend.username)
+        assertThat(opposite.size).isEqualTo(1)
+        assertThat(opposite[0].username).isEqualTo(savedFriend.username)
+        assertThat(opposite[0].friendName).isEqualTo(saveduser.username)
     }
 
     @Test
@@ -129,19 +131,19 @@ class MemberServiceIntegrationTest @Autowired constructor(
         val friend = Member("friend1", passwordEncoder.encode(pw1))
         memberRepository.saveAll(listOf(user, friend))
 
-        val saveduser = memberRepository.findByUsername(username)
-        val savedFriend = memberRepository.findByUsername("friend1")
+        val saveduser = memberRepository.findById(user.id).orElse(null)
+        val savedFriend = memberRepository.findById(friend.id).orElse(null)
         assertThat(saveduser).isNotNull
         assertThat(savedFriend).isNotNull
         val friendShipDTO = memberService.addFriend(saveduser!!.id, savedFriend!!.id)
 
         val friends = memberService.getFriends(saveduser.id)
         assertThat(friends).hasSize(1)
-        assertThat(friends?.get(0)?.id).isEqualTo(savedFriend.id)
+        assertThat(friends[0].friendName).isEqualTo(savedFriend.username)
         val opposite = memberService.getFriends(savedFriend.id)
 
         assertThat(opposite).hasSize(1)
-        assertThat(opposite?.get(0)?.id).isEqualTo(user.id)
+        assertThat(opposite[0].friendName).isEqualTo(user.username)
     }
 
 }
