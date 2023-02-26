@@ -445,13 +445,62 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
-<li><a href="#member-controller-integration-test">[POST] /users/friends/{friendsId}</a>
+<li><a href="#_회원가입_post_signup">회원가입 [POST] /signup</a>
 <ul class="sectlevel2">
-<li><a href="#member-controller-integration-test_curl_request">Curl request</a></li>
-<li><a href="#member-controller-integration-test_httpie_request">HTTPie request</a></li>
-<li><a href="#member-controller-integration-test_http_request">HTTP request</a></li>
-<li><a href="#member-controller-integration-test_response_body">Response body</a></li>
-<li><a href="#member-controller-integration-test_http_response">HTTP response</a></li>
+<li><a href="#_회원가입_post_signup_curl_request">Curl request</a></li>
+<li><a href="#_회원가입_post_signup_http_request">HTTP request</a></li>
+<li><a href="#_회원가입_post_signup_request_body">Request body</a></li>
+<li><a href="#_회원가입_post_signup_response_body">Response body</a></li>
+<li><a href="#_회원가입_post_signup_http_response">HTTP response</a></li>
+</ul>
+</li>
+<li><a href="#_로그인_post_login">로그인 [POST] /login</a>
+<ul class="sectlevel2">
+<li><a href="#_로그인_post_login_curl_request">Curl request</a></li>
+<li><a href="#_로그인_post_login_http_request">HTTP request</a></li>
+<li><a href="#_로그인_post_login_request_body">Request body</a></li>
+</ul>
+</li>
+<li><a href="#_친구_추가_요청_post_usersfriendsfriendsid">친구 추가 요청 [POST] /users/friends/{friendsId}</a>
+<ul class="sectlevel2">
+<li><a href="#_친구_추가_요청_post_usersfriendsfriendsid_curl_request">Curl request</a></li>
+<li><a href="#_친구_추가_요청_post_usersfriendsfriendsid_http_request">HTTP request</a></li>
+<li><a href="#_친구_추가_요청_post_usersfriendsfriendsid_response_body">Response body</a></li>
+<li><a href="#_친구_추가_요청_post_usersfriendsfriendsid_http_response">HTTP response</a></li>
+<li><a href="#_친구_추가_요청_post_usersfriendsfriendsid_path_parameters">Path parameters</a></li>
+</ul>
+</li>
+<li><a href="#_계좌_생성_post_account">계좌 생성 [POST] /account</a>
+<ul class="sectlevel2">
+<li><a href="#_계좌_생성_post_account_curl_request">Curl request</a></li>
+<li><a href="#_계좌_생성_post_account_http_request">HTTP request</a></li>
+<li><a href="#_계좌_생성_post_account_response_body">Response body</a></li>
+<li><a href="#_계좌_생성_post_account_http_response">HTTP response</a></li>
+</ul>
+</li>
+<li><a href="#_계좌_목록_조회_get_accounts">계좌 목록 조회 [GET] /accounts</a>
+<ul class="sectlevel2">
+<li><a href="#_계좌_목록_조회_get_accounts_curl_request">Curl request</a></li>
+<li><a href="#_계좌_목록_조회_get_accounts_http_request">HTTP request</a></li>
+<li><a href="#_계좌_목록_조회_get_accounts_response_body">Response body</a></li>
+<li><a href="#_계좌_목록_조회_get_accounts_http_response">HTTP response</a></li>
+</ul>
+</li>
+<li><a href="#_단일_계좌_조회_get_accountsaccountid">단일 계좌 조회 [GET] /accounts/{accountId}</a>
+<ul class="sectlevel2">
+<li><a href="#_단일_계좌_조회_get_accountsaccountid_curl_request">Curl request</a></li>
+<li><a href="#_단일_계좌_조회_get_accountsaccountid_http_request">HTTP request</a></li>
+<li><a href="#_단일_계좌_조회_get_accountsaccountid_response_body">Response body</a></li>
+<li><a href="#_단일_계좌_조회_get_accountsaccountid_http_response">HTTP response</a></li>
+<li><a href="#_단일_계좌_조회_get_accountsaccountid_path_parameters">Path parameters</a></li>
+</ul>
+</li>
+<li><a href="#_계좌_이체_post_accounttransfer">계좌 이체 [POST] /account/transfer</a>
+<ul class="sectlevel2">
+<li><a href="#_계좌_이체_post_accounttransfer_curl_request">Curl request</a></li>
+<li><a href="#_계좌_이체_post_accounttransfer_http_request">HTTP request</a></li>
+<li><a href="#_계좌_이체_post_accounttransfer_response_body">Response body</a></li>
+<li><a href="#_계좌_이체_post_accounttransfer_http_response">HTTP response</a></li>
 </ul>
 </li>
 </ul>
@@ -459,56 +508,495 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 <div id="content">
 <div class="sect1">
-<h2 id="member-controller-integration-test"><a class="link" href="#member-controller-integration-test">[POST] /users/friends/{friendsId}</a></h2>
+<h2 id="_회원가입_post_signup"><a class="link" href="#_회원가입_post_signup">회원가입 [POST] /signup</a></h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="member-controller-integration-test_curl_request"><a class="link" href="#member-controller-integration-test_curl_request">Curl request</a></h3>
+<h3 id="_회원가입_post_signup_curl_request"><a class="link" href="#_회원가입_post_signup_curl_request">Curl request</a></h3>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/users/friends/018683f5-81b6-a378-7de9-2c6be06923b4' -i -X POST \
-    -H 'Content-Type: application/json' \
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/signup' -i -X POST \
+    -H 'Content-Type: application/json;charset=UTF-8' \
+    -H 'Accept: application/json' \
+    -d '{
+  "username" : "inu2",
+  "pw" : "12345"
+}'</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_회원가입_post_signup_http_request"><a class="link" href="#_회원가입_post_signup_http_request">HTTP request</a></h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">POST /signup HTTP/1.1
+Content-Type: application/json;charset=UTF-8
+Accept: application/json
+Content-Length: 43
+Host: localhost:8080
+
+{
+  "username" : "inu2",
+  "pw" : "12345"
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_회원가입_post_signup_request_body"><a class="link" href="#_회원가입_post_signup_request_body">Request body</a></h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-json" data-lang="json">{
+  "username" : "inu2",
+  "pw" : "12345"
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_회원가입_post_signup_response_body"><a class="link" href="#_회원가입_post_signup_response_body">Response body</a></h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-json" data-lang="json">{
+  "id" : "01868e10-ca58-bc58-3064-491c703242ce",
+  "username" : "inu2"
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_회원가입_post_signup_http_response"><a class="link" href="#_회원가입_post_signup_http_response">HTTP response</a></h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
+Content-Type: application/json
+X-Content-Type-Options: nosniff
+X-XSS-Protection: 0
+Cache-Control: no-cache, no-store, max-age=0, must-revalidate
+Pragma: no-cache
+Expires: 0
+Content-Length: 74
+
+{
+  "id" : "01868e10-ca58-bc58-3064-491c703242ce",
+  "username" : "inu2"
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_로그인_post_login"><a class="link" href="#_로그인_post_login">로그인 [POST] /login</a></h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_로그인_post_login_curl_request"><a class="link" href="#_로그인_post_login_curl_request">Curl request</a></h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/login' -i -X POST \
+    -H 'Content-Type: application/json;charset=UTF-8' \
+    -d '{
+  "username" : "inu",
+  "pw" : "12345value"
+}'</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_로그인_post_login_http_request"><a class="link" href="#_로그인_post_login_http_request">HTTP request</a></h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">POST /login HTTP/1.1
+Content-Type: application/json;charset=UTF-8
+Content-Length: 47
+Host: localhost:8080
+
+{
+  "username" : "inu",
+  "pw" : "12345value"
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_로그인_post_login_request_body"><a class="link" href="#_로그인_post_login_request_body">Request body</a></h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-json" data-lang="json">{
+  "username" : "inu",
+  "pw" : "12345value"
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_친구_추가_요청_post_usersfriendsfriendsid"><a class="link" href="#_친구_추가_요청_post_usersfriendsfriendsid">친구 추가 요청 [POST] /users/friends/{friendsId}</a></h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_친구_추가_요청_post_usersfriendsfriendsid_curl_request"><a class="link" href="#_친구_추가_요청_post_usersfriendsfriendsid_curl_request">Curl request</a></h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/users/friends/01868e10-b88a-c10c-3aa8-b34ca8f36171' -i -X POST \
     -H 'Accept: application/json'</code></pre>
 </div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="member-controller-integration-test_httpie_request"><a class="link" href="#member-controller-integration-test_httpie_request">HTTPie request</a></h3>
+<h3 id="_친구_추가_요청_post_usersfriendsfriendsid_http_request"><a class="link" href="#_친구_추가_요청_post_usersfriendsfriendsid_http_request">HTTP request</a></h3>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">$ http POST 'http://localhost:8080/users/friends/018683f5-81b6-a378-7de9-2c6be06923b4' \
-    'Content-Type:application/json' \
-    'Accept:application/json'</code></pre>
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">POST /users/friends/01868e10-b88a-c10c-3aa8-b34ca8f36171 HTTP/1.1
+Accept: application/json
+Host: localhost:8080
+Content-Type: application/x-www-form-urlencoded</code></pre>
 </div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="member-controller-integration-test_http_request"><a class="link" href="#member-controller-integration-test_http_request">HTTP request</a></h3>
+<h3 id="_친구_추가_요청_post_usersfriendsfriendsid_response_body"><a class="link" href="#_친구_추가_요청_post_usersfriendsfriendsid_response_body">Response body</a></h3>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight nowrap"><code class="language-http" data-lang="http">POST /users/friends/018683f5-81b6-a378-7de9-2c6be06923b4 HTTP/1.1
+<pre class="highlight nowrap"><code class="language-json" data-lang="json">{
+  "id" : "01868e10-ca79-d230-942c-957220ea21df",
+  "username" : "inu",
+  "friendName" : "friend1"
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_친구_추가_요청_post_usersfriendsfriendsid_http_response"><a class="link" href="#_친구_추가_요청_post_usersfriendsfriendsid_http_response">HTTP response</a></h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json
+X-Content-Type-Options: nosniff
+X-XSS-Protection: 0
+Cache-Control: no-cache, no-store, max-age=0, must-revalidate
+Pragma: no-cache
+Expires: 0
+Content-Length: 101
+
+{
+  "id" : "01868e10-ca79-d230-942c-957220ea21df",
+  "username" : "inu",
+  "friendName" : "friend1"
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_친구_추가_요청_post_usersfriendsfriendsid_path_parameters"><a class="link" href="#_친구_추가_요청_post_usersfriendsfriendsid_path_parameters">Path parameters</a></h3>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 1. /users/friends/{friendId}</caption>
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Parameter</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>friendId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">the id of the friend you want to add</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_계좌_생성_post_account"><a class="link" href="#_계좌_생성_post_account">계좌 생성 [POST] /account</a></h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_계좌_생성_post_account_curl_request"><a class="link" href="#_계좌_생성_post_account_curl_request">Curl request</a></h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/account' -i -X POST \
+    -H 'Content-Type: application/json;charset=UTF-8' \
+    -H 'Accept: application/json' \
+    -d '{
+  "name" : "ac2",
+  "amount" : 3000
+}'</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_계좌_생성_post_account_http_request"><a class="link" href="#_계좌_생성_post_account_http_request">HTTP request</a></h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">POST /account HTTP/1.1
+Content-Type: application/json;charset=UTF-8
+Accept: application/json
+Content-Length: 39
+Host: localhost:8080
+
+{
+  "name" : "ac2",
+  "amount" : 3000
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_계좌_생성_post_account_response_body"><a class="link" href="#_계좌_생성_post_account_response_body">Response body</a></h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-json" data-lang="json">{
+  "ownerId" : "01868e10-bf80-602a-33a8-0bf3bd30ee16",
+  "accountId" : "01868e10-bfd0-ac12-acc8-dd06a7a45c29",
+  "name" : "ac2",
+  "balance" : 3000
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_계좌_생성_post_account_http_response"><a class="link" href="#_계좌_생성_post_account_http_response">HTTP response</a></h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
+Content-Type: application/json
+X-Content-Type-Options: nosniff
+X-XSS-Protection: 0
+Cache-Control: no-cache, no-store, max-age=0, must-revalidate
+Pragma: no-cache
+Expires: 0
+Content-Length: 150
+
+{
+  "ownerId" : "01868e10-bf80-602a-33a8-0bf3bd30ee16",
+  "accountId" : "01868e10-bfd0-ac12-acc8-dd06a7a45c29",
+  "name" : "ac2",
+  "balance" : 3000
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_계좌_목록_조회_get_accounts"><a class="link" href="#_계좌_목록_조회_get_accounts">계좌 목록 조회 [GET] /accounts</a></h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_계좌_목록_조회_get_accounts_curl_request"><a class="link" href="#_계좌_목록_조회_get_accounts_curl_request">Curl request</a></h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/accounts' -i -X GET \
+    -H 'Accept: application/json'</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_계좌_목록_조회_get_accounts_http_request"><a class="link" href="#_계좌_목록_조회_get_accounts_http_request">HTTP request</a></h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">GET /accounts HTTP/1.1
 Accept: application/json
 Host: localhost:8080</code></pre>
 </div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="member-controller-integration-test_response_body"><a class="link" href="#member-controller-integration-test_response_body">Response body</a></h3>
+<h3 id="_계좌_목록_조회_get_accounts_response_body"><a class="link" href="#_계좌_목록_조회_get_accounts_response_body">Response body</a></h3>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight nowrap"><code class="language-json" data-lang="json">잘못된 요청입니다.</code></pre>
+<pre class="highlight nowrap"><code class="language-json" data-lang="json">[ {
+  "ownerId" : "01868e10-c642-74f2-b813-8cbb42059fd9",
+  "accountId" : "01868e10-c68e-2892-b714-d6f9f91a0d1c",
+  "name" : "account1",
+  "balance" : 3000
+}, {
+  "ownerId" : "01868e10-c642-74f2-b813-8cbb42059fd9",
+  "accountId" : "01868e10-c691-6f1c-cd31-4712628fd670",
+  "name" : "ac2",
+  "balance" : 0
+} ]</code></pre>
 </div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="member-controller-integration-test_http_response"><a class="link" href="#member-controller-integration-test_http_response">HTTP response</a></h3>
+<h3 id="_계좌_목록_조회_get_accounts_http_response"><a class="link" href="#_계좌_목록_조회_get_accounts_http_response">HTTP response</a></h3>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 400 Bad Request
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 26
+X-Content-Type-Options: nosniff
+X-XSS-Protection: 0
+Cache-Control: no-cache, no-store, max-age=0, must-revalidate
+Pragma: no-cache
+Expires: 0
+Content-Length: 308
 
-잘못된 요청입니다.</code></pre>
+[ {
+  "ownerId" : "01868e10-c642-74f2-b813-8cbb42059fd9",
+  "accountId" : "01868e10-c68e-2892-b714-d6f9f91a0d1c",
+  "name" : "account1",
+  "balance" : 3000
+}, {
+  "ownerId" : "01868e10-c642-74f2-b813-8cbb42059fd9",
+  "accountId" : "01868e10-c691-6f1c-cd31-4712628fd670",
+  "name" : "ac2",
+  "balance" : 0
+} ]</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_단일_계좌_조회_get_accountsaccountid"><a class="link" href="#_단일_계좌_조회_get_accountsaccountid">단일 계좌 조회 [GET] /accounts/{accountId}</a></h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_단일_계좌_조회_get_accountsaccountid_curl_request"><a class="link" href="#_단일_계좌_조회_get_accountsaccountid_curl_request">Curl request</a></h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/accounts/01868e10-c28d-5cd8-81b8-7aad45451b2a' -i -X GET \
+    -H 'Accept: application/json'</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_단일_계좌_조회_get_accountsaccountid_http_request"><a class="link" href="#_단일_계좌_조회_get_accountsaccountid_http_request">HTTP request</a></h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">GET /accounts/01868e10-c28d-5cd8-81b8-7aad45451b2a HTTP/1.1
+Accept: application/json
+Host: localhost:8080</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_단일_계좌_조회_get_accountsaccountid_response_body"><a class="link" href="#_단일_계좌_조회_get_accountsaccountid_response_body">Response body</a></h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-json" data-lang="json">{
+  "ownerId" : "01868e10-c241-2e88-795f-4ada85d03e76",
+  "accountId" : "01868e10-c28d-5cd8-81b8-7aad45451b2a",
+  "name" : "account1",
+  "balance" : 3000
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_단일_계좌_조회_get_accountsaccountid_http_response"><a class="link" href="#_단일_계좌_조회_get_accountsaccountid_http_response">HTTP response</a></h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
+Content-Type: application/json
+X-Content-Type-Options: nosniff
+X-XSS-Protection: 0
+Cache-Control: no-cache, no-store, max-age=0, must-revalidate
+Pragma: no-cache
+Expires: 0
+Content-Length: 155
+
+{
+  "ownerId" : "01868e10-c241-2e88-795f-4ada85d03e76",
+  "accountId" : "01868e10-c28d-5cd8-81b8-7aad45451b2a",
+  "name" : "account1",
+  "balance" : 3000
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_단일_계좌_조회_get_accountsaccountid_path_parameters"><a class="link" href="#_단일_계좌_조회_get_accountsaccountid_path_parameters">Path parameters</a></h3>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 1. /accounts/{accountId}</caption>
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Parameter</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>accountId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">계좌 id</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_계좌_이체_post_accounttransfer"><a class="link" href="#_계좌_이체_post_accounttransfer">계좌 이체 [POST] /account/transfer</a></h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_계좌_이체_post_accounttransfer_curl_request"><a class="link" href="#_계좌_이체_post_accounttransfer_curl_request">Curl request</a></h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/account/transfer' -i -X POST \
+    -H 'Content-Type: application/json;charset=UTF-8' \
+    -H 'Accept: application/json' \
+    -d '{
+  "fromAccountId" : "01868e10-c337-7115-c981-fc9a8feb8c52",
+  "toAccountId" : "01868e10-c337-7115-c981-fc9a8feb8c53",
+  "amount" : 3000
+}'</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_계좌_이체_post_accounttransfer_http_request"><a class="link" href="#_계좌_이체_post_accounttransfer_http_request">HTTP request</a></h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">POST /account/transfer HTTP/1.1
+Content-Type: application/json;charset=UTF-8
+Accept: application/json
+Content-Length: 139
+Host: localhost:8080
+
+{
+  "fromAccountId" : "01868e10-c337-7115-c981-fc9a8feb8c52",
+  "toAccountId" : "01868e10-c337-7115-c981-fc9a8feb8c53",
+  "amount" : 3000
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_계좌_이체_post_accounttransfer_response_body"><a class="link" href="#_계좌_이체_post_accounttransfer_response_body">Response body</a></h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-json" data-lang="json">{
+  "fromAccountId" : "01868e10-c337-7115-c981-fc9a8feb8c52",
+  "toAccountId" : "01868e10-c337-7115-c981-fc9a8feb8c53",
+  "amount" : 3000
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_계좌_이체_post_accounttransfer_http_response"><a class="link" href="#_계좌_이체_post_accounttransfer_http_response">HTTP response</a></h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
+Content-Type: application/json
+X-Content-Type-Options: nosniff
+X-XSS-Protection: 0
+Cache-Control: no-cache, no-store, max-age=0, must-revalidate
+Pragma: no-cache
+Expires: 0
+Content-Length: 139
+
+{
+  "fromAccountId" : "01868e10-c337-7115-c981-fc9a8feb8c52",
+  "toAccountId" : "01868e10-c337-7115-c981-fc9a8feb8c53",
+  "amount" : 3000
+}</code></pre>
 </div>
 </div>
 </div>
@@ -518,7 +1006,7 @@ Content-Length: 26
 <div id="footer">
 <div id="footer-text">
 Version 0.0.1-SNAPSHOT<br>
-Last updated 2023-02-25 00:06:05 +0900
+Last updated 2023-02-26 23:09:07 +0900
 </div>
 </div>
 </body>

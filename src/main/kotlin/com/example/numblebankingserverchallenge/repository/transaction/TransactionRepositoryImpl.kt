@@ -17,13 +17,13 @@ class TransactionRepositoryImpl(private val jpaQueryFactory: JPAQueryFactory):Tr
 
     override fun findByOwnerId(ownerId: UUID): List<Transaction> {
 
-        return jpaQueryFactory.selectFrom(transaction).leftJoin(transaction.fromAccount, account).where(
+        return jpaQueryFactory.selectFrom(transaction).join(transaction.fromAccount, account).where(
             transaction.fromAccount.owner.id.eq(ownerId)).leftJoin(transaction.fromAccount.owner, QMember.member).fetchJoin().fetch()
     }
 
 
     override fun findByReceiverId(receiverId: UUID): List<Transaction> {
-        return jpaQueryFactory.selectFrom(transaction).leftJoin(transaction.toAccount, account).where(
+        return jpaQueryFactory.selectFrom(transaction).join(transaction.toAccount, account).on(
             transaction.toAccount.owner.id.eq(receiverId)).leftJoin(transaction.toAccount.owner, QMember.member).fetchJoin().fetch()
     }
 }

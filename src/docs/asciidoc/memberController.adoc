@@ -1,24 +1,16 @@
-:doctype: book
-ifndef::snippets[]
-:snippets: ./build/generated-snippets
-endif::[]
 
-:toc: left
-:toclevels: 1
-:sectlinks:
-= NumbleBankingChallenge Account API
+
+
+
+
+== 회원가입 [POST] /signup
+operation::member-controller-docs-test/회원가입[snippets="curl-request,http-request,request-body,response-body,http-response"]
+
+== 로그인 [POST] /login
+operation::member-controller-docs-test/로그인[snippets="curl-request,http-request,request-body"]
 
 == 친구 추가 요청 [POST] /users/friends/\{friendsId\}
-
-
-== 회원가입
-include::signup.adoc[]
-
-== 로그인
-include::login.adoc[]
-
-== 친구 추가 요청
-include::friend-request.adoc[]
+operation::member-controller-docs-test/친구추가[snippets="curl-request,http-request,response-body,http-response,path-parameters"]
 
 
 

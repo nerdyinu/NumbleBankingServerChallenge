@@ -8,5 +8,5 @@ interface AccountRepositoryCustom {
     fun findByIdWithLock(accountId: UUID): Account?
     fun findByIdJoinOwner(accountId:UUID): Account?
     fun findByOwnerAndId(ownerId: UUID,accountId: UUID):Account?
-    fun findByOwnerId(ownerId:UUID):List<Account>
+    fun findAllByOwnerId(ownerId:UUID):List<Account>
 }

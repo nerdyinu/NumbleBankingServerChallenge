@@ -1,4 +1,0 @@
-
-
-
-operation::member-controller-docs-test/친구추가[snippets="curl-request,http-request,response-body,http-response,path-parameters"]

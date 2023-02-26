@@ -19,7 +19,7 @@ class AccountRepositoryImpl(private val jpaQueryFactory: JPAQueryFactory) : Acco
             .fetchOne()
 
 
-    override fun findByOwnerId(ownerId: UUID): List<Account> =
+    override fun findAllByOwnerId(ownerId: UUID): List<Account> =
         jpaQueryFactory.selectFrom(account).join(account.owner, member)
             .on(member.id.eq(ownerId))
             .fetch()

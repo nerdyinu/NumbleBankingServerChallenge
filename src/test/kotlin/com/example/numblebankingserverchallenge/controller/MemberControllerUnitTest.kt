@@ -6,10 +6,9 @@ import com.example.numblebankingserverchallenge.domain.Member
 import com.example.numblebankingserverchallenge.dto.FriendDTO
 import com.example.numblebankingserverchallenge.dto.LoginRequest
 import com.example.numblebankingserverchallenge.dto.MemberDTO
-import com.example.numblebankingserverchallenge.dto.SignUpRequest
 import com.example.numblebankingserverchallenge.repository.member.MemberRepository
 import com.example.numblebankingserverchallenge.service.MemberService
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.example.numblebankingserverchallenge.util.*
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
 import io.mockk.junit5.MockKExtension
@@ -20,7 +19,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.MediaType
-import org.springframework.security.core.userdetails.User
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.test.context.support.WithAnonymousUser
 import org.springframework.security.test.context.support.WithMockUser
@@ -28,7 +26,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.post
-import com.example.numblebankingserverchallenge.util.*
 
 @ExtendWith(SpringExtension::class, MockKExtension::class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)

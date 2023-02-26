@@ -8,11 +8,8 @@ import com.example.numblebankingserverchallenge.dto.*
 import com.example.numblebankingserverchallenge.repository.account.AccountRepository
 import com.example.numblebankingserverchallenge.repository.friendship.FriendshipRepository
 import com.example.numblebankingserverchallenge.repository.member.MemberRepository
-import com.example.numblebankingserverchallenge.repository.transaction.TransactionRepository
-import com.example.numblebankingserverchallenge.util.account
-import com.example.numblebankingserverchallenge.util.friend
-import com.example.numblebankingserverchallenge.util.friendAccount
-import com.example.numblebankingserverchallenge.util.member
+import com.example.numblebankingserverchallenge.util.*
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import kotlinx.coroutines.*
 import org.assertj.core.api.Assertions.*
 import org.junit.jupiter.api.AfterEach
@@ -21,6 +18,8 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.mock.web.MockHttpSession
+import org.springframework.security.core.userdetails.User
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.transaction.annotation.Transactional
@@ -41,6 +40,18 @@ class AccountServiceTest @Autowired constructor(
     lateinit var account1: Account
     lateinit var friend1:Member
     lateinit var friendac:Account
+    val member = Member(signUpRequest.username, passwordEncoder.encode(signUpRequest.pw))
+    val friend = Member(friendSignup.username, passwordEncoder.encode(friendSignup.pw))
+    val returnMember: MemberDTO = MemberDTO(member)
+    val loginRequest = LoginRequest(signUpRequest.username, signUpRequest.pw)
+    val mapper = jacksonObjectMapper()
+    val session = MockHttpSession()
+    val mySession = mapOf("user" to returnMember)
+    val account = Account(member, "account1", AccountBalance(3000L))
+    val friendAccount = Account(friend, "ac2", AccountBalance(3000L))
+    val userdetails = User(member.username, member.encryptedPassword, arrayListOf())
+    fun myIdentifier(methodName: String) = "{class-name}/$methodName"
+    val returnAccount = AccountDTO(account)
     @BeforeEach
     fun init() {
         owner = memberRepository.save(member)

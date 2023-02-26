@@ -19,24 +19,14 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager
 import org.springframework.context.annotation.Import
-import org.springframework.stereotype.Component
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.transaction.PlatformTransactionManager
-import org.springframework.transaction.annotation.Propagation
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.transaction.support.TransactionTemplate
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.Executors
 
-
-@Component
-class AsyncTransaction {
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
-    fun run(runnable: Runnable) {
-        runnable.run()
-    }
-}
 
 @DataJpaTest
 @ExtendWith(SpringExtension::class)
@@ -76,7 +66,7 @@ class AccountRepositoryUnitTest @Autowired constructor(
         em.persist(account)
         em.persist(account2)
         em.flush()
-        val res = accountRepository.findByOwnerId(owner.id)
+        val res = accountRepository.findAllByOwnerId(owner.id)
         assertThat(res[0].id).isEqualTo(account.id)
         assertThat(res[1].id).isEqualTo(account2.id)
     }

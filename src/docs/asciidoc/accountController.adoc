@@ -1,0 +1,20 @@
+
+
+
+
+== 계좌 생성 [POST] /account
+operation::account-controller-docs-test/계좌생성[snippets="curl-request,http-request,response-body,http-response"]
+
+== 계좌 목록 조회 [GET] /accounts
+operation::account-controller-docs-test/계좌목록 조회[snippets="curl-request,http-request,response-body,http-response"]
+
+== 단일 계좌 조회 [GET] /accounts/\{accountId\}
+operation::account-controller-docs-test/계좌조회[snippets="curl-request,http-request,response-body,http-response,path-parameters"]
+
+== 계좌 이체 [POST] /account/transfer
+operation::account-controller-docs-test/계좌이체[snippets="curl-request,http-request,response-body,http-response"]
+
+
+
+
+

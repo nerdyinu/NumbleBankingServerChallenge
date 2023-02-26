@@ -109,11 +109,14 @@ tasks.asciidoctor{
     inputs.dir(snippetsDir)
     dependsOn(tasks.test)
     configurations(asciidoctorExt.name)
-    sources{include("**/memberController.adoc", "**/accountController.adoc")}
+    sources{include("**/index.adoc")}
     baseDirFollowsSourceFile()
 }
 
 tasks.register<Copy>("copyDocument"){
+    doFirst{
+        delete(file("src/main/resources/static/docs"))
+    }
     from("build/docs/asciidoc")
     into("src/main/resources/static/docs")
     dependsOn(tasks.asciidoctor)
@@ -122,6 +125,7 @@ tasks.build{
     dependsOn("copyDocument")
 }
 tasks.bootJar{
+
     dependsOn("copyDocument")
     from("${tasks.asciidoctor.get().outputDir}") {
         into("BOOT-INF/classes/static/docs")

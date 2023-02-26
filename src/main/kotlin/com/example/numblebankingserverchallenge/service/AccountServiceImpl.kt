@@ -29,8 +29,10 @@ class AccountServiceImpl(
             ?: throw CustomException.AccountNotFoundException()
 
 
-    override fun findAllByOwnerId(ownerId: UUID): List<AccountDTO> =
-        accountRepository.findByOwnerId(ownerId).map(::AccountDTO)
+    override fun findAllByOwnerId(ownerId: UUID): List<AccountDTO> {
+        memberRepository.findById(ownerId).orElse(null) ?: throw CustomException.UserNotFoundException()
+        return accountRepository.findAllByOwnerId(ownerId).map(::AccountDTO)
+    }
 
     @Transactional
     override fun createAccount(ownerId: UUID, accountCreateRequest: AccountCreateRequest): AccountDTO {

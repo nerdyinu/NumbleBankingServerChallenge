@@ -445,25 +445,18 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
+<li><a href="#_회원가입_post_signup">회원가입 [POST] /signup</a></li>
+<li><a href="#_로그인_post_login">로그인 [POST] /login</a></li>
 <li><a href="#_친구_추가_요청_post_usersfriendsfriendsid">친구 추가 요청 [POST] /users/friends/{friendsId}</a></li>
-<li><a href="#_회원가입">회원가입</a></li>
-<li><a href="#_로그인">로그인</a></li>
-<li><a href="#_친구_추가_요청">친구 추가 요청</a></li>
 </ul>
 </div>
 </div>
 <div id="content">
 <div class="sect1">
-<h2 id="_친구_추가_요청_post_usersfriendsfriendsid"><a class="link" href="#_친구_추가_요청_post_usersfriendsfriendsid">친구 추가 요청 [POST] /users/friends/{friendsId}</a></h2>
-<div class="sectionbody">
-
-</div>
-</div>
-<div class="sect1">
-<h2 id="_회원가입"><a class="link" href="#_회원가입">회원가입</a></h2>
+<h2 id="_회원가입_post_signup"><a class="link" href="#_회원가입_post_signup">회원가입 [POST] /signup</a></h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_회원가입_curl_request"><a class="link" href="#_회원가입_curl_request">Curl request</a></h3>
+<h3 id="_회원가입_post_signup_curl_request"><a class="link" href="#_회원가입_post_signup_curl_request">Curl request</a></h3>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/signup' -i -X POST \
@@ -477,7 +470,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 </div>
 <div class="sect2">
-<h3 id="_회원가입_http_request"><a class="link" href="#_회원가입_http_request">HTTP request</a></h3>
+<h3 id="_회원가입_post_signup_http_request"><a class="link" href="#_회원가입_post_signup_http_request">HTTP request</a></h3>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">POST /signup HTTP/1.1
@@ -494,7 +487,7 @@ Host: localhost:8080
 </div>
 </div>
 <div class="sect2">
-<h3 id="_회원가입_request_body"><a class="link" href="#_회원가입_request_body">Request body</a></h3>
+<h3 id="_회원가입_post_signup_request_body"><a class="link" href="#_회원가입_post_signup_request_body">Request body</a></h3>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-json" data-lang="json">{
@@ -505,18 +498,18 @@ Host: localhost:8080
 </div>
 </div>
 <div class="sect2">
-<h3 id="_회원가입_response_body"><a class="link" href="#_회원가입_response_body">Response body</a></h3>
+<h3 id="_회원가입_post_signup_response_body"><a class="link" href="#_회원가입_post_signup_response_body">Response body</a></h3>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-json" data-lang="json">{
-  "id" : "01868943-f1c3-2f08-a133-40b7a5fde2c6",
+  "id" : "01868e00-34f7-c95a-0e34-d7aad38a92be",
   "username" : "inu2"
 }</code></pre>
 </div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_회원가입_http_response"><a class="link" href="#_회원가입_http_response">HTTP response</a></h3>
+<h3 id="_회원가입_post_signup_http_response"><a class="link" href="#_회원가입_post_signup_http_response">HTTP response</a></h3>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
@@ -529,7 +522,7 @@ Expires: 0
 Content-Length: 74
 
 {
-  "id" : "01868943-f1c3-2f08-a133-40b7a5fde2c6",
+  "id" : "01868e00-34f7-c95a-0e34-d7aad38a92be",
   "username" : "inu2"
 }</code></pre>
 </div>
@@ -538,10 +531,10 @@ Content-Length: 74
 </div>
 </div>
 <div class="sect1">
-<h2 id="_로그인"><a class="link" href="#_로그인">로그인</a></h2>
+<h2 id="_로그인_post_login"><a class="link" href="#_로그인_post_login">로그인 [POST] /login</a></h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_로그인_curl_request"><a class="link" href="#_로그인_curl_request">Curl request</a></h3>
+<h3 id="_로그인_post_login_curl_request"><a class="link" href="#_로그인_post_login_curl_request">Curl request</a></h3>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/login' -i -X POST \
@@ -554,7 +547,7 @@ Content-Length: 74
 </div>
 </div>
 <div class="sect2">
-<h3 id="_로그인_http_request"><a class="link" href="#_로그인_http_request">HTTP request</a></h3>
+<h3 id="_로그인_post_login_http_request"><a class="link" href="#_로그인_post_login_http_request">HTTP request</a></h3>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">POST /login HTTP/1.1
@@ -570,7 +563,7 @@ Host: localhost:8080
 </div>
 </div>
 <div class="sect2">
-<h3 id="_로그인_request_body"><a class="link" href="#_로그인_request_body">Request body</a></h3>
+<h3 id="_로그인_post_login_request_body"><a class="link" href="#_로그인_post_login_request_body">Request body</a></h3>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-json" data-lang="json">{
@@ -583,22 +576,22 @@ Host: localhost:8080
 </div>
 </div>
 <div class="sect1">
-<h2 id="_친구_추가_요청"><a class="link" href="#_친구_추가_요청">친구 추가 요청</a></h2>
+<h2 id="_친구_추가_요청_post_usersfriendsfriendsid"><a class="link" href="#_친구_추가_요청_post_usersfriendsfriendsid">친구 추가 요청 [POST] /users/friends/{friendsId}</a></h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_친구_추가_요청_curl_request"><a class="link" href="#_친구_추가_요청_curl_request">Curl request</a></h3>
+<h3 id="_친구_추가_요청_post_usersfriendsfriendsid_curl_request"><a class="link" href="#_친구_추가_요청_post_usersfriendsfriendsid_curl_request">Curl request</a></h3>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/users/friends/01868943-f27a-d517-42f7-60289e028ff3' -i -X POST \
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/users/friends/01868e00-19a2-8b09-cf63-cd8c0e72f0b6' -i -X POST \
     -H 'Accept: application/json'</code></pre>
 </div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_친구_추가_요청_http_request"><a class="link" href="#_친구_추가_요청_http_request">HTTP request</a></h3>
+<h3 id="_친구_추가_요청_post_usersfriendsfriendsid_http_request"><a class="link" href="#_친구_추가_요청_post_usersfriendsfriendsid_http_request">HTTP request</a></h3>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight nowrap"><code class="language-http" data-lang="http">POST /users/friends/01868943-f27a-d517-42f7-60289e028ff3 HTTP/1.1
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">POST /users/friends/01868e00-19a2-8b09-cf63-cd8c0e72f0b6 HTTP/1.1
 Accept: application/json
 Host: localhost:8080
 Content-Type: application/x-www-form-urlencoded</code></pre>
@@ -606,11 +599,11 @@ Content-Type: application/x-www-form-urlencoded</code></pre>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_친구_추가_요청_response_body"><a class="link" href="#_친구_추가_요청_response_body">Response body</a></h3>
+<h3 id="_친구_추가_요청_post_usersfriendsfriendsid_response_body"><a class="link" href="#_친구_추가_요청_post_usersfriendsfriendsid_response_body">Response body</a></h3>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-json" data-lang="json">{
-  "id" : "01868943-f281-9718-c4c1-3ce114f3e45e",
+  "id" : "01868e00-3515-f648-95d5-0ffce2ccdcd4",
   "username" : "inu",
   "friendName" : "friend1"
 }</code></pre>
@@ -618,7 +611,7 @@ Content-Type: application/x-www-form-urlencoded</code></pre>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_친구_추가_요청_http_response"><a class="link" href="#_친구_추가_요청_http_response">HTTP response</a></h3>
+<h3 id="_친구_추가_요청_post_usersfriendsfriendsid_http_response"><a class="link" href="#_친구_추가_요청_post_usersfriendsfriendsid_http_response">HTTP response</a></h3>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
@@ -631,7 +624,7 @@ Expires: 0
 Content-Length: 101
 
 {
-  "id" : "01868943-f281-9718-c4c1-3ce114f3e45e",
+  "id" : "01868e00-3515-f648-95d5-0ffce2ccdcd4",
   "username" : "inu",
   "friendName" : "friend1"
 }</code></pre>
@@ -639,7 +632,7 @@ Content-Length: 101
 </div>
 </div>
 <div class="sect2">
-<h3 id="_친구_추가_요청_path_parameters"><a class="link" href="#_친구_추가_요청_path_parameters">Path parameters</a></h3>
+<h3 id="_친구_추가_요청_post_usersfriendsfriendsid_path_parameters"><a class="link" href="#_친구_추가_요청_post_usersfriendsfriendsid_path_parameters">Path parameters</a></h3>
 <table class="tableblock frame-all grid-all stretch">
 <caption class="title">Table 1. /users/friends/{friendId}</caption>
 <colgroup>
@@ -666,7 +659,7 @@ Content-Length: 101
 <div id="footer">
 <div id="footer-text">
 Version 0.0.1-SNAPSHOT<br>
-Last updated 2023-02-26 00:40:57 +0900
+Last updated 2023-02-26 04:18:41 +0900
 </div>
 </div>
 </body>
