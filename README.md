@@ -31,4 +31,4 @@ https://inudev5.github.io/NumbleBankingServerChallenge/
 
 
 ### 위키 페이지 / 회고록
-https://github.com/inudev5/NumbleBankingServerChallenge.wiki.git
+[https://github.com/inudev5/NumbleBankingServerChallenge.wiki.git](https://github.com/inudev5/NumbleBankingServerChallenge/wiki/Numble-%EB%B1%85%ED%82%B9-%EC%84%9C%EB%B2%84-%EC%B1%8C%EB%A6%B0%EC%A7%80)
