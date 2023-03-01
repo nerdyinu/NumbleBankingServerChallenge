@@ -63,25 +63,25 @@ https://inudev5.github.io/NumbleBankingServerChallenge/
 
 로그인과 회원가입을 제외한 모든 엔드포인트들은 세션에 포함된 멤버id로부터 현재 로그인 중인 사용자 정보를 추출하며, 존재하지 않는 사용자의 경우 기본적으로 404 Not Found 상태를 표시합니다.
 
-**친구목록 조회 [GET] /users/friends
+**친구목록 조회 [GET] /users/friends**
 
 - 별도의 요청 body 나 파라미터 없이 세션 id만으로 친구목록을 조회합니다.
 
 
-**친구 추가 [POST] /users/friends
+**친구 추가 [POST] /users/friends**
 
 - FriendRequest 요청 객체를 사용하여, 추가할 친구의 id로 회원을 조회하고, 세션에 담긴 유저의 id로 회원을 조회하여, 두 회원간의 친구관계 엔티티 `Friendship`  을 양방향으로 생성하고 저장합니다.
 - 회원을 조회하지 못하는 경우 404 Not Found, 조회한 두 회원 엔티티가 동일한 경우 400 Bad Request 상태를 표시합니다.
 
-**계좌 단건 조회 [GET] /accounts/{accountId}
+**계좌 단건 조회 [GET] /accounts/{accountId}**
 
 - 세션으로부터 가져온 유저 id와, path variable로 가져오는 accountid를 사용해 유저의 account 중 해당 id를 가지는 account를 조회하고 AccountDto로 반환합니다. AccountDto는 유저의 id와 계좌 id, 계좌명, 잔액 필드를 가지고 있습니다. 계좌가 존재하지 않을 경우 `404` Not Found 상태를 표시합니다.
 
-**계좌 목록 조회 [GET] /accounts
+**계좌 목록 조회 [GET] /accounts**
 
 - 세션으로부터 가져온 유저 id가 주인인 계좌를 컬렉션으로 조회하고, `AccountDto`를 반환합니다.
 
-**계좌 생성 [POST] /account
+**계좌 생성 [POST] /account**
 
 - 요청용 `AccountCreateReuqest` 객체를 사용하여 계좌를 생성하고, `AccountDto`를 반환합니다.
 
