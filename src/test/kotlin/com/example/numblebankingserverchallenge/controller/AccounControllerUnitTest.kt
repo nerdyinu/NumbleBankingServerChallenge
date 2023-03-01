@@ -120,22 +120,23 @@ fun createAccount(@RequestBody accountRequest: AccountCreateRequest, @SessionLog
     @Test
     @WithMockUser
     fun `transfer- 세션 없을 시 401 UnAuthorized`(){
-        val transactionRequest = TransactionRequest(member.id, friend.id, 3000L )
+        val transactionRequest = TransactionRequest(returnMember.id, friend.id, 3000L )
         val returnTransaction  = TransactionDTO(transactionRequest.fromAccountId,transactionRequest.toAccountId,transactionRequest.amount)
-        every { accountService.createTransaction(transactionRequest) } returns returnTransaction
+        every { accountService.createTransaction(returnMember.id,transactionRequest) } returns returnTransaction
         mockMvc.post("/account/transfer"){
             accept = MediaType.APPLICATION_JSON
             contentType = MediaType.APPLICATION_JSON
             content = mapper.writeValueAsString(transactionRequest)
+
         }.andExpect { status { isUnauthorized() } }
-        verify(exactly = 0) { accountService.createTransaction(transactionRequest) }
+        verify(exactly = 0) { accountService.createTransaction(member.id,transactionRequest) }
     }
     @Test
     @WithMockUser
     fun `transfer- 세션 있을 시 정상적으로 TransactionDTO 반환`(){
         val transactionRequest = TransactionRequest(account.id, friendAccount.id, 3000L )
         val returnTransaction  = TransactionDTO(transactionRequest.fromAccountId,transactionRequest.toAccountId,transactionRequest.amount)
-        every { accountService.createTransaction(transactionRequest) } returns returnTransaction
+        every { accountService.createTransaction(returnMember.id,transactionRequest) } returns returnTransaction
         mockMvc.post("/account/transfer"){
             accept = MediaType.APPLICATION_JSON
             contentType = MediaType.APPLICATION_JSON
@@ -148,6 +149,6 @@ fun createAccount(@RequestBody accountRequest: AccountCreateRequest, @SessionLog
             jsonPath("$.toAccountId"){value(transactionRequest.toAccountId.toString())}
             jsonPath("$.amount"){value(transactionRequest.amount.toInt())}
         }
-        verify { accountService.createTransaction(transactionRequest) }
+        verify { accountService.createTransaction(returnMember.id,transactionRequest) }
     }
 }

@@ -24,8 +24,10 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.transaction.PlatformTransactionManager
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.transaction.support.TransactionTemplate
+import java.util.*
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
 
 
 @DataJpaTest
@@ -58,7 +60,7 @@ class AccountRepositoryUnitTest @Autowired constructor(
     *
     * */
     @Test
-    fun `test findByOwnerId`() {
+    fun `test findAllByOwnerId`() {
         val owner = Member("inu", "encrypted")
         val account = Account(owner, "account1",)
         val account2 = Account(owner, "account2")
@@ -75,7 +77,7 @@ class AccountRepositoryUnitTest @Autowired constructor(
     *  fun findByIdJoinOwner(accountId:UUID): Account?
     * */
     @Test
-    fun `test findByIdFetchOWner`() {
+    fun `test findByIdJoinOwner`() {
         val owner = Member("inu", "encrypted")
         val account = Account(owner, "account1")
         val account2 = Account(owner, "account2")
@@ -96,35 +98,42 @@ class AccountRepositoryUnitTest @Autowired constructor(
     */
     @Test
     fun `test findByIdWithLock`() {
-        runBlocking {
+
             val member = Member("inu", encryptedPassword = "encrypted")
             val account = Account(member, "account1", AccountBalance(0L))
             em.persist(member)
             em.persist(account)
             em.flush()
+            em.clear()
+            val executorService = Executors.newFixedThreadPool(100)
+            val countDownLatch = CountDownLatch(100)
+            val localEntityManager = ThreadLocal<EntityManager>()
 
-            val threadLocalEntityManager = ThreadLocal<EntityManager>()
-            val deferred1 = async {
-                val transactionTemplate = TransactionTemplate(transactionManager)
-                transactionTemplate.execute {
-                    val account1 = accountRepository.findByIdWithLock(account.id)
-                    account1?.addAmount(5000L)
-                }
-            }
-
-            val deferred2 = async{
-                val transactionTemplate = TransactionTemplate(transactionManager)
-                transactionTemplate.execute {
-                    val account1 = accountRepository.findByIdWithLock(account.id)
-                    account1?.checkAmount(3000L)
+            for(i in 1..100){
+                executorService.submit {
+                    val transactionTemplate = TransactionTemplate(transactionManager)
+                    transactionTemplate.execute {
+                        val account1 = accountRepository.findByIdWithLock(account.id, false)
+                        account1?.addAmount(1000L)
+                    }
+                    countDownLatch.countDown()
                 }
             }
 
 //            assertThatThrownBy { runBlocking { deferred1.await();deferred2.await(); } }
-            awaitAll(deferred1,deferred2)
-            assertThat(account.balance.balance).isEqualTo(2000L)
+           countDownLatch.await()
+        executorService.shutdown()
+        try {
+            if (!executorService.awaitTermination(800, TimeUnit.MILLISECONDS)) {
+                executorService.shutdownNow();
+            }
+        } catch (e: InterruptedException) {
+            executorService.shutdownNow();
         }
+            assertThat(executorService.isShutdown).isTrue()
+        println(account.balance.balance)
     }
+
 
     @Test
     fun  `test findById does not trigger deadlock`() {

@@ -20,7 +20,10 @@ spring:
         dialect: org.hibernate.dialect.H2Dialect
     show-sql: true
     database-platform: H2
-
+  h2:
+    console:
+      path: /h2-console
+      enabled: true
 logging:
   level:
   #    org.hibernate.sql: debug

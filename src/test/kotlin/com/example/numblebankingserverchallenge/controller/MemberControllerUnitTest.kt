@@ -4,6 +4,7 @@ package com.example.numblebankingserverchallenge.controller
 import com.example.numblebankingserverchallenge.domain.Friendship
 import com.example.numblebankingserverchallenge.domain.Member
 import com.example.numblebankingserverchallenge.dto.FriendDTO
+import com.example.numblebankingserverchallenge.dto.FriendRequest
 import com.example.numblebankingserverchallenge.dto.LoginRequest
 import com.example.numblebankingserverchallenge.dto.MemberDTO
 import com.example.numblebankingserverchallenge.repository.member.MemberRepository
@@ -133,11 +134,12 @@ class MemberControllerUnitTest @Autowired constructor(
     fun `인증된 경우 친구추가 성공`() {
         val friend = Member("friend1", "23456value")
         val friendship = Friendship(member, friend)
-
+        val request = FriendRequest(friend.id)
         every { memberService.addFriend(member.id, friend.id) } returns FriendDTO(friendship)
-        mockMvc.post("/users/friends/${friend.id}") {
+        mockMvc.post("/users/friends") {
             contentType = MediaType.APPLICATION_JSON
             accept = MediaType.APPLICATION_JSON
+            content = mapper.writeValueAsString(request)
             sessionAttrs = mySession
         }.andExpect {
             status { isOk() }
@@ -151,10 +153,12 @@ class MemberControllerUnitTest @Autowired constructor(
     fun `세션 로그인 체크 실패 시- 401 UNAUTHORIZED`() {
         val friend = Member("friend1", "23456value")
         val friendship = Friendship(member, friend)
+        val request = FriendRequest(friend.id)
         every { memberService.addFriend(member.id, friend.id) } returns FriendDTO(friendship)
-        mockMvc.post("/users/friends/${friend.id}") {
+        mockMvc.post("/users/friends") {
             contentType = MediaType.APPLICATION_JSON
             accept = MediaType.APPLICATION_JSON
+            content = mapper.writeValueAsString(request)
         }.andExpect {
             status { isUnauthorized() }
         }

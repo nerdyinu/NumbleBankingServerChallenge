@@ -12,7 +12,9 @@ import com.example.numblebankingserverchallenge.repository.account.AccountReposi
 import com.example.numblebankingserverchallenge.repository.friendship.FriendshipRepository
 import com.example.numblebankingserverchallenge.repository.member.MemberRepository
 import com.example.numblebankingserverchallenge.repository.transaction.TransactionRepository
+import jakarta.persistence.OptimisticLockException
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Propagation
 import org.springframework.transaction.annotation.Transactional
 import java.util.*
 
@@ -24,8 +26,8 @@ class AccountServiceImpl(
     private val friendshipRepository: FriendshipRepository,
     private val numbleAlarmService: NumbleAlarmService,
 ) : AccountService {
-    override fun findAccountByOwnerAndId(ownerId: UUID,accountId: UUID): AccountDTO =
-        accountRepository.findByOwnerAndId(ownerId,accountId)?.let(::AccountDTO)
+    override fun findAccountByOwnerAndId(ownerId: UUID, accountId: UUID): AccountDTO =
+        accountRepository.findByOwnerAndId(ownerId, accountId)?.let(::AccountDTO)
             ?: throw CustomException.AccountNotFoundException()
 
 
@@ -42,19 +44,29 @@ class AccountServiceImpl(
     }
 
     @Transactional
-    override fun createTransaction(transactionRequest: TransactionRequest): TransactionDTO {
+    override fun createTransaction(memberId: UUID, transactionRequest: TransactionRequest): TransactionDTO {
         val (fromAccountId, toAccountId, amount) = transactionRequest
         val fromAccount =
-            accountRepository.findByIdJoinOwner(fromAccountId) ?: throw CustomException.AccountNotFoundException()
+            accountRepository.findByOwnerAndId(memberId, fromAccountId,false)
+                                 ?: throw CustomException.AccountNotFoundException()
         val toAccount =
-            accountRepository.findByIdJoinOwner(toAccountId) ?: throw CustomException.AccountNotFoundException()
+            accountRepository.findByIdJoinOwner(toAccountId, false ) ?: throw CustomException.AccountNotFoundException()
         friendshipRepository.findFriend(fromAccount.owner.id, toAccount.owner.id)
             ?: throw CustomException.BadRequestException()
-        val transaction =
-            Transaction(fromAccount, toAccount, amount).let { transactionRepository.save(it) } //shared-lock
-        fromAccount.checkAmount(amount) // x-lock : deadlock
-        toAccount.addAmount(amount)
-        numbleAlarmService.notify(fromAccount.owner.id, "transaction completed.")
-        return TransactionDTO(fromAccountId, toAccountId, amount)
+        try {
+            val transaction =
+                Transaction(fromAccount, toAccount, amount).let { transactionRepository.save(it) } //shared-lock
+            // x-lock : deadlock
+
+            fromAccount.checkAmount(amount)
+            toAccount.addAmount(amount)
+            numbleAlarmService.notify(fromAccount.owner.id, "transaction completed.")
+            return TransactionDTO(fromAccountId, toAccountId, amount)
+        }catch (ex:OptimisticLockException){
+            println(ex)
+            return TransactionDTO(fromAccountId, toAccountId, amount)
+        }
+
+
     }
 }

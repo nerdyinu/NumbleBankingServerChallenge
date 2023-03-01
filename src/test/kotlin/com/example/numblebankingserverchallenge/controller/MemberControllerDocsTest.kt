@@ -46,12 +46,10 @@ class MemberControllerDocsTest @Autowired constructor(
 ) {
 
 
-
-
     @Autowired
     lateinit var mockMvc: MockMvc
-    lateinit var user:Member
-    lateinit var friend1:Member
+    lateinit var user: Member
+    lateinit var friend1: Member
     val signUpRequest = SignUpRequest("inu", "12345value")
     val friendSignup = SignUpRequest("friend1", "23456value")
     val member = Member(signUpRequest.username, passwordEncoder.encode(signUpRequest.pw))
@@ -66,8 +64,8 @@ class MemberControllerDocsTest @Autowired constructor(
     @BeforeEach
     fun setUp() {
 
-        user=memberRepository.save(member)
-        friend1=memberRepository.save(friend)
+        user = memberRepository.save(member)
+        friend1 = memberRepository.save(friend)
     }
 
     @AfterEach
@@ -180,10 +178,12 @@ class MemberControllerDocsTest @Autowired constructor(
     fun `존재하지 않는 친구id인 경우 404`() {
 
         val randomId = UUID.randomUUID()
-        mockMvc.post("/users/friends/${randomId}") {
+        val friendRequest = FriendRequest(randomId)
+        mockMvc.post("/users/friends") {
 
             contentType = APPLICATION_JSON
             accept = APPLICATION_JSON
+            content = mapper.writeValueAsString(friendRequest)
             sessionAttrs = mySession
         }.andExpect {
             status { isNotFound() }
@@ -194,10 +194,11 @@ class MemberControllerDocsTest @Autowired constructor(
     @Test
     @WithMockUser
     fun `자기 자신을 요청한 경우 400`() {
-
-        mockMvc.post("/users/friends/${user.id}") {
+        val friendRequest = FriendRequest(user.id)
+        mockMvc.post("/users/friends") {
             contentType = APPLICATION_JSON
             accept = APPLICATION_JSON
+            content = mapper.writeValueAsString(friendRequest)
             sessionAttrs = mySession
         }.andExpect {
             status { isBadRequest() }
@@ -209,9 +210,11 @@ class MemberControllerDocsTest @Autowired constructor(
     @Test
     @WithMockUser
     fun `친구 추가요청 - 정상적으로 요청 - FriendDTO 반환`() {
+        val friendRequest = FriendRequest(friend1.id)
         val request = mockMvc.perform(
-            RestDocumentationRequestBuilders.post("/users/friends/{friendId}", friend1.id).accept(APPLICATION_JSON)
-                .sessionAttrs(mySession)
+            RestDocumentationRequestBuilders.post("/users/friends").accept(APPLICATION_JSON)
+                .sessionAttrs(mySession).contentType(APPLICATION_JSON)
+                .content(mapper.writeValueAsString(friendRequest))
         )
         request.andExpect(status().isOk).andExpect(content().contentType(APPLICATION_JSON))
             .andExpect(jsonPath("$.id").isNotEmpty)
@@ -220,7 +223,6 @@ class MemberControllerDocsTest @Autowired constructor(
             .andDo(
                 document(
                     myIdentifier("친구추가"),
-                    pathParameters(parameterWithName("friendId").description("the id of the friend you want to add")),
                     responseFields(
                         fieldWithPath("id")
                             .description("The ID of the friendship.")
@@ -238,26 +240,26 @@ class MemberControllerDocsTest @Autowired constructor(
 
     }
 
-/*
-    @GetMapping("/users/friends")
-    fun friendsList(@SessionLoginChecker member:MemberDTO): ResponseEntity<List<MemberDTO>> {
-        return memberService.getFriends(member.id).let { ResponseEntity.ok().body(it) }
-    }
-*/
+    /*
+        @GetMapping("/users/friends")
+        fun friendsList(@SessionLoginChecker member:MemberDTO): ResponseEntity<List<MemberDTO>> {
+            return memberService.getFriends(member.id).let { ResponseEntity.ok().body(it) }
+        }
+    */
     @Test
     @WithMockUser
-    fun `친구 목록 조회 성공`(){
+    fun `친구 목록 조회 성공`() {
         friendshipRepository.save(Friendship(user, friend1))
-        mockMvc.get("/users/friends"){
-            accept= APPLICATION_JSON
-            sessionAttrs= mySession
+        mockMvc.get("/users/friends") {
+            accept = APPLICATION_JSON
+            sessionAttrs = mySession
         }.andExpect {
             status { isOk() }
             content { contentType(APPLICATION_JSON) }
             content {
-                jsonPath("$[0].friendName"){value(friend.username)}
-                jsonPath("$[0].username"){value(member.username)}
-                jsonPath("$[0].id"){isNotEmpty(); isString()}
+                jsonPath("$[0].friendName") { value(friend.username) }
+                jsonPath("$[0].username") { value(member.username) }
+                jsonPath("$[0].id") { isNotEmpty(); isString() }
             }
         }.andDo {
             handle(

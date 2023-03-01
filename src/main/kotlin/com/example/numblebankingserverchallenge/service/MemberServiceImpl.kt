@@ -56,8 +56,6 @@ class MemberServiceImpl (
         val friendShip = Friendship(findMember, findFriend)
         val friendShip2 = Friendship(findFriend, findMember)
         val (f1,f2)=friendshipRepository.saveAll(listOf(friendShip, friendShip2)) // s-lock
-        findMember.addFreind(f1)
-        findFriend.addFreind(f2)
         return FriendDTO(f1)
     }
 }

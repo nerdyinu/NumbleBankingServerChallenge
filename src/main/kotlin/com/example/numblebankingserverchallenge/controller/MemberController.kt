@@ -2,6 +2,7 @@ package com.example.numblebankingserverchallenge.controller
 
 import com.example.numblebankingserverchallenge.config.SessionLoginChecker
 import com.example.numblebankingserverchallenge.dto.FriendDTO
+import com.example.numblebankingserverchallenge.dto.FriendRequest
 import com.example.numblebankingserverchallenge.dto.MemberDTO
 import com.example.numblebankingserverchallenge.dto.SignUpRequest
 import com.example.numblebankingserverchallenge.service.MemberService
@@ -21,8 +22,8 @@ class MemberController (private val memberService: MemberService){
         return memberService.getFriends(member.id).let { ResponseEntity.ok().body(it) }
     }
 
-    @PostMapping("/users/friends/{friendId}")
-    fun addFriend(@PathVariable("friendId") friendId:UUID, @SessionLoginChecker member: MemberDTO):ResponseEntity<FriendDTO>{
-        return memberService.addFriend(member.id,friendId).let { ResponseEntity.ok(it) }
+    @PostMapping("/users/friends")
+    fun addFriend(@RequestBody friendRequest: FriendRequest, @SessionLoginChecker member: MemberDTO):ResponseEntity<FriendDTO>{
+        return memberService.addFriend(member.id,friendRequest.friendId).let { ResponseEntity.ok(it) }
     }
 }

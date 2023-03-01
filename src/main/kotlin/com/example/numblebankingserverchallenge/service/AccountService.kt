@@ -10,5 +10,5 @@ interface AccountService {
     fun findAccountByOwnerAndId(ownerId: UUID,accountId: UUID):AccountDTO?
     fun findAllByOwnerId(ownerId:UUID):List<AccountDTO>
     fun createAccount(ownerId: UUID, accountCreateRequest: AccountCreateRequest):AccountDTO
-    fun createTransaction(transactionRequest: TransactionRequest): TransactionDTO
+    fun createTransaction(memberId:UUID,transactionRequest: TransactionRequest): TransactionDTO
 }

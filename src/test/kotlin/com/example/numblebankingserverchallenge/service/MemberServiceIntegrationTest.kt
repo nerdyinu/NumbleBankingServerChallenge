@@ -66,23 +66,6 @@ class MemberServiceIntegrationTest @Autowired constructor(
 
     }
 
-    @Test
-    fun `로그인 성공`() {
-        memberService.createUser(signUpRequest)
-        val loginRequest = LoginRequest(username, pw1)
-//        val loggedInUser = memberService.login(loginRequest)
-//        assertThat(loggedInUser).isNotNull
-//        assertThat(loggedInUser?.username).isEqualTo(signUpRequest.username)
-    }
-
-    @Test
-    fun `로그인 실패`() {
-        memberService.createUser(signUpRequest)
-        val loginRequest = LoginRequest(username, "23456")
-//        val failedLoginUser = memberService.login(loginRequest)
-//        assertThat(failedLoginUser).isNull()
-        hashSetOf<Int>()
-    }
 
     @Test
     fun `친구추가 성공`() {

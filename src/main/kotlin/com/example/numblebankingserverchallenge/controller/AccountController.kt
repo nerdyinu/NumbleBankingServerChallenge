@@ -28,7 +28,7 @@ class AccountController(private val accountService: AccountService) {
         @RequestBody transactionRequest: TransactionRequest,
         @SessionLoginChecker member: MemberDTO
     ): ResponseEntity<TransactionDTO> {
-        return accountService.createTransaction(transactionRequest).let{ ResponseEntity.status(HttpStatus.OK).body(it)}
+        return accountService.createTransaction(member.id,transactionRequest).let{ ResponseEntity.status(HttpStatus.OK).body(it)}
     }
 
 }
