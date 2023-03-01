@@ -30,3 +30,5 @@ RestDocs API Documentation:
 https://inudev5.github.io/NumbleBankingServerChallenge/
 
 
+### 위키 페이지 / 회고록
+https://github.com/inudev5/NumbleBankingServerChallenge.wiki.git
